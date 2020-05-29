@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 50;
+	objectVersion = 51;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -14,9 +14,13 @@
 		50E8468D247F5DEE004E2802 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 50E8468C247F5DEE004E2802 /* Assets.xcassets */; };
 		50E84690247F5DEE004E2802 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 50E8468E247F5DEE004E2802 /* LaunchScreen.storyboard */; };
 		50F3EAA124806EF800C3DCE4 /* ProcessImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50F3EAA024806EF800C3DCE4 /* ProcessImage.swift */; };
+		50F3EAA32480776800C3DCE4 /* ProcessedImageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50F3EAA22480776800C3DCE4 /* ProcessedImageViewController.swift */; };
+		50F3EAA52480A05300C3DCE4 /* Data.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50F3EAA42480A05300C3DCE4 /* Data.swift */; };
+		6C61455595C41BF695F57DF1 /* Pods_Scanner.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F4AB250B0CA1281B557A889 /* Pods_Scanner.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		2FC7FAA99A6A39041A101E11 /* Pods-Scanner.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Scanner.release.xcconfig"; path = "Target Support Files/Pods-Scanner/Pods-Scanner.release.xcconfig"; sourceTree = "<group>"; };
 		50E84680247F5DE9004E2802 /* Scanner.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Scanner.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		50E84683247F5DE9004E2802 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		50E84685247F5DE9004E2802 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -26,6 +30,10 @@
 		50E8468F247F5DEE004E2802 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		50E84691247F5DEE004E2802 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		50F3EAA024806EF800C3DCE4 /* ProcessImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProcessImage.swift; sourceTree = "<group>"; };
+		50F3EAA22480776800C3DCE4 /* ProcessedImageViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProcessedImageViewController.swift; sourceTree = "<group>"; };
+		50F3EAA42480A05300C3DCE4 /* Data.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Data.swift; sourceTree = "<group>"; };
+		5FD1229FA20B8D4F4218C85D /* Pods-Scanner.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Scanner.debug.xcconfig"; path = "Target Support Files/Pods-Scanner/Pods-Scanner.debug.xcconfig"; sourceTree = "<group>"; };
+		8F4AB250B0CA1281B557A889 /* Pods_Scanner.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Scanner.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -33,6 +41,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6C61455595C41BF695F57DF1 /* Pods_Scanner.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -44,6 +53,8 @@
 			children = (
 				50E84682247F5DE9004E2802 /* Scanner */,
 				50E84681247F5DE9004E2802 /* Products */,
+				8BF2C994AB6E905690BDB1A9 /* Pods */,
+				B72C9259F4DF03854B5E6F93 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -74,6 +85,7 @@
 			isa = PBXGroup;
 			children = (
 				50E84687247F5DE9004E2802 /* ViewController.swift */,
+				50F3EAA22480776800C3DCE4 /* ProcessedImageViewController.swift */,
 			);
 			path = Controller;
 			sourceTree = "<group>";
@@ -90,8 +102,26 @@
 			isa = PBXGroup;
 			children = (
 				50F3EAA024806EF800C3DCE4 /* ProcessImage.swift */,
+				50F3EAA42480A05300C3DCE4 /* Data.swift */,
 			);
 			path = Model;
+			sourceTree = "<group>";
+		};
+		8BF2C994AB6E905690BDB1A9 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				5FD1229FA20B8D4F4218C85D /* Pods-Scanner.debug.xcconfig */,
+				2FC7FAA99A6A39041A101E11 /* Pods-Scanner.release.xcconfig */,
+			);
+			path = Pods;
+			sourceTree = "<group>";
+		};
+		B72C9259F4DF03854B5E6F93 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				8F4AB250B0CA1281B557A889 /* Pods_Scanner.framework */,
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -101,9 +131,11 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 50E84694247F5DEE004E2802 /* Build configuration list for PBXNativeTarget "Scanner" */;
 			buildPhases = (
+				D3F73D7A5DF94D9D4C2D237E /* [CP] Check Pods Manifest.lock */,
 				50E8467C247F5DE9004E2802 /* Sources */,
 				50E8467D247F5DE9004E2802 /* Frameworks */,
 				50E8467E247F5DE9004E2802 /* Resources */,
+				023E24A79654E816F05CEDC4 /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -160,12 +192,56 @@
 		};
 /* End PBXResourcesBuildPhase section */
 
+/* Begin PBXShellScriptBuildPhase section */
+		023E24A79654E816F05CEDC4 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-Scanner/Pods-Scanner-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-Scanner/Pods-Scanner-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Scanner/Pods-Scanner-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		D3F73D7A5DF94D9D4C2D237E /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-Scanner-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
 		50E8467C247F5DE9004E2802 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 				50E84688247F5DE9004E2802 /* ViewController.swift in Sources */,
+				50F3EAA52480A05300C3DCE4 /* Data.swift in Sources */,
+				50F3EAA32480776800C3DCE4 /* ProcessedImageViewController.swift in Sources */,
 				50E84684247F5DE9004E2802 /* AppDelegate.swift in Sources */,
 				50E84686247F5DE9004E2802 /* SceneDelegate.swift in Sources */,
 				50F3EAA124806EF800C3DCE4 /* ProcessImage.swift in Sources */,
@@ -310,6 +386,7 @@
 		};
 		50E84695247F5DEE004E2802 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 5FD1229FA20B8D4F4218C85D /* Pods-Scanner.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
@@ -329,6 +406,7 @@
 		};
 		50E84696247F5DEE004E2802 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 2FC7FAA99A6A39041A101E11 /* Pods-Scanner.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;

@@ -1,15 +1,14 @@
 //
-//  ProcessImage.swift
+//  Data.swift
 //  Scanner
 //
 //  Created by Andy Zhang on 5/28/20.
 //  Copyright © 2020 Andy Zhang. All rights reserved.
 //
 
-import UIKit
-import Vision
-import VisionKit
+import Foundation
+import RealmSwift
 
-struct ProcessImage{
-    
+class Data: Object{
+    @objc dynamic var text: String = ""
 }
