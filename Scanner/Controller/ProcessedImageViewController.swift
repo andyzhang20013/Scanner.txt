@@ -13,17 +13,32 @@ import RealmSwift
 class ProcessedImageViewController: UIViewController, VNDocumentCameraViewControllerDelegate{
     @IBOutlet weak var imageView: UIImageView!
     @IBOutlet weak var textView: UITextView!
+    let realm = try! Realm()
+    var button = Button()
     var textRecognitionRequest = VNRecognizeTextRequest(completionHandler: nil)
+    var text: Results<Data>?
     private let textRecognitionWorkQueue = DispatchQueue(label: "MyVisionScannerQueue", qos: .userInitiated, attributes: [], autoreleaseFrequency: .workItem)
  var selectedText : Data? //this will be set during the segue
     override func viewDidLoad() {
+        
         super.viewDidLoad()
         
-        textView.isEditable = false
-        pictureButtonPressed()
-        setupVision()
+        //print(button.buttonPressed)
+        if button.buttonPressed{
+            pictureButtonPressed()
+            setupVision()
+            textView.isEditable = false
+            button.buttonPressed = false //after the button is pressed, set back to false
+        }
+        
+        if (textView.text != nil){ //if there is text, we just display it (no other methods are called)
+            textView.text = selectedText?.text
+        }
+        
+        
         
     }
+    
     func pictureButtonPressed(){
         let scannerViewController = VNDocumentCameraViewController()
         scannerViewController.delegate = self
@@ -42,13 +57,16 @@ class ProcessedImageViewController: UIViewController, VNDocumentCameraViewContro
                 detectedText += topCandidate.string
                 detectedText += "\n"
             }
-            
+            let newData = Data()
+            newData.text = detectedText
+            self.saveItems(text: newData)
             DispatchQueue.main.async {
                 
                  self.textView.text = detectedText
+               
                  self.textView.flashScrollIndicators()
                  
-                 
+                
                 //need to send the text & image over to ProcessImage view controller
                 
                 
@@ -77,7 +95,9 @@ class ProcessedImageViewController: UIViewController, VNDocumentCameraViewContro
             } catch {
                 print(error)
             }
-        }
+            }
+        
+
     }
 
     func documentCameraViewController(_ controller: VNDocumentCameraViewController, didFinishWith scan: VNDocumentCameraScan) {
@@ -116,4 +136,17 @@ class ProcessedImageViewController: UIViewController, VNDocumentCameraViewContro
         }
         return reloadedImage
     }
+    
+    
+    func saveItems(text: Data){ //should save after image is processed
+        do{
+            try realm.write{
+                realm.add(text)
+            }
+        }
+            catch{
+                print("Error saving text: \(error)")
+            }
+        }
+    
 }

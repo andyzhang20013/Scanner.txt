@@ -14,54 +14,43 @@ class ViewController: UITableViewController, VNDocumentCameraViewControllerDeleg
 
 let processedImage = ProcessedImageViewController()
 let realm = try! Realm()
+var button = Button()
 var text: Results<Data>?
-    private var recognizedText: String?
 override func viewDidLoad() {
     super.viewDidLoad()
-    
-    
+    loadItems()
 }
 
+    
 func loadItems(){
     text = realm.objects(Data.self)
     tableView.reloadData()
 }
-
-    
-    func saveItems(text: Data){ //should save after image is processed
-        do{
-            try realm.write{
-                realm.add(text)
-            }
-        }
-            catch{
-                print("Error saving text: \(error)")
-            }
-        }
-
-    
-    
     
     @IBAction func pictureButtonPressed(_ sender: UIBarButtonItem) {
-    
-        processedImage.setupVision()
-    performSegue(withIdentifier: "toProcessedImage", sender: self)
-    
+        print("abc")
+        button.setButton(true)
+        print(button.getButton())
+        //performSegue(withIdentifier: "takeNewPicture", sender: self)
 }
 
-
-
- 
-
-
-
-
-
-override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+override func prepare(for segue: UIStoryboardSegue, sender: Any?) { //always go through here
    let destinationVC = segue.destination as! ProcessedImageViewController
+    print("ok")
+    print(button.getButton())
     if let indexPath = tableView.indexPathForSelectedRow{ //we use this to get the selected row
+        if text?[indexPath.row].text != "No text scanned yet" { //if there is actually something scanned
+            button.setButton(false)
         destinationVC.selectedText = text?[indexPath.row]
+        }
+        else{ //if nothing scanned, then automatically launch camera
+            button.setButton(true)
+        }
     }
+    else{ //if we press the camera button
+        button.setButton(true)
+    }
+    print(button.getButton())
 }
 
 
