@@ -27,32 +27,28 @@ func loadItems(){
     tableView.reloadData()
 }
     
-    @IBAction func pictureButtonPressed(_ sender: UIBarButtonItem) {
-        print("abc")
-        button.setButton(true)
-        print(button.getButton())
-        //performSegue(withIdentifier: "takeNewPicture", sender: self)
-}
 
-override func prepare(for segue: UIStoryboardSegue, sender: Any?) { //always go through here
+
+
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) { //always go through here
    let destinationVC = segue.destination as! ProcessedImageViewController
-    print("ok")
+
     print(button.getButton())
     if let indexPath = tableView.indexPathForSelectedRow{ //we use this to get the selected row
-        if text?[indexPath.row].text != "No text scanned yet" { //if there is actually something scanned
-            button.setButton(false)
+        if text?[indexPath.row].text != "No text scanned yet" || text?[indexPath.row].text != nil { //if there is actually something scanned
         destinationVC.selectedText = text?[indexPath.row]
+            destinationVC.buttonPressed = false
         }
         else{ //if nothing scanned, then automatically launch camera
-            button.setButton(true)
+            destinationVC.buttonPressed = true
         }
     }
     else{ //if we press the camera button
-        button.setButton(true)
+        destinationVC.buttonPressed = true
     }
-    print(button.getButton())
 }
-
+    @IBAction func unwind( _ seg: UIStoryboardSegue) { //this function gets called when we press the "cancel" in camera view controller
+    }
 
 //MARK: - Tableview Datasource Methods - This creates the cells
 

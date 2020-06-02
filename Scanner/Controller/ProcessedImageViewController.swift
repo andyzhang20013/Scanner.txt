@@ -14,29 +14,21 @@ class ProcessedImageViewController: UIViewController, VNDocumentCameraViewContro
     @IBOutlet weak var imageView: UIImageView!
     @IBOutlet weak var textView: UITextView!
     let realm = try! Realm()
-    var button = Button()
+    var buttonPressed: Bool = false
     var textRecognitionRequest = VNRecognizeTextRequest(completionHandler: nil)
     var text: Results<Data>?
     private let textRecognitionWorkQueue = DispatchQueue(label: "MyVisionScannerQueue", qos: .userInitiated, attributes: [], autoreleaseFrequency: .workItem)
  var selectedText : Data? //this will be set during the segue
     override func viewDidLoad() {
-        
         super.viewDidLoad()
-        
-        //print(button.buttonPressed)
-        if button.buttonPressed{
+        if buttonPressed{
             pictureButtonPressed()
             setupVision()
             textView.isEditable = false
-            button.buttonPressed = false //after the button is pressed, set back to false
         }
-        
         if (textView.text != nil){ //if there is text, we just display it (no other methods are called)
             textView.text = selectedText?.text
         }
-        
-        
-        
     }
     
     func pictureButtonPressed(){
@@ -44,11 +36,12 @@ class ProcessedImageViewController: UIViewController, VNDocumentCameraViewContro
         scannerViewController.delegate = self
         present(scannerViewController, animated: true)
     }
+    
+
      func setupVision() {
         
         textRecognitionRequest = VNRecognizeTextRequest { (request, error) in
             guard let observations = request.results as? [VNRecognizedTextObservation] else { return }
-            print("setupVision")
             var detectedText = ""
             for observation in observations {
                 guard let topCandidate = observation.topCandidates(1).first else { return }
@@ -83,7 +76,6 @@ class ProcessedImageViewController: UIViewController, VNDocumentCameraViewContro
     
     private func recognizeTextInImage(_ image: UIImage) {
 
-        print("ok")
         
         guard let cgImage = image.cgImage else { return }
         
@@ -123,10 +115,12 @@ class ProcessedImageViewController: UIViewController, VNDocumentCameraViewContro
     func documentCameraViewController(_ controller: VNDocumentCameraViewController, didFailWithError error: Error) {
         print(error)
         controller.dismiss(animated: true)
+        performSegue(withIdentifier: "unwindToCells", sender: self)
     }
 
     func documentCameraViewControllerDidCancel(_ controller: VNDocumentCameraViewController) {
         controller.dismiss(animated: true)
+        performSegue(withIdentifier: "unwindToCells", sender: self)
     }
 
     func compressedImage(_ originalImage: UIImage) -> UIImage {
