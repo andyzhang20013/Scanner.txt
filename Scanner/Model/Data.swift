@@ -11,4 +11,5 @@ import RealmSwift
 
 class Data: Object{
     @objc dynamic var text: String = ""
+    @objc dynamic var imageKey: String = ""
 }

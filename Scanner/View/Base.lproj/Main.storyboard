@@ -107,6 +107,7 @@
                         <outlet property="imageView" destination="QZ7-6K-HGF" id="jIh-yP-t2G"/>
                         <outlet property="textView" destination="cZg-uU-1w3" id="PPS-eu-yOC"/>
                         <segue destination="Wjf-hK-xPJ" kind="unwind" identifier="unwindToCells" unwindAction="unwind:" id="kPq-Ib-xoq"/>
+                        <segue destination="Wjf-hK-xPJ" kind="unwind" identifier="backButtonPressed" unwindAction="unwind:" id="HxM-cH-niQ"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="cIy-F7-dMD" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>

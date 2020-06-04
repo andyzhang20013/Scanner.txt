@@ -17,8 +17,18 @@ class ProcessedImageViewController: UIViewController, VNDocumentCameraViewContro
     var buttonPressed: Bool = false
     var textRecognitionRequest = VNRecognizeTextRequest(completionHandler: nil)
     var text: Results<Data>?
+    var cellNumber: Int = 0 //for referring to existing cells
+    var imageKey: Data?
+    var textCount: Int? //for creating new cells
     private let textRecognitionWorkQueue = DispatchQueue(label: "MyVisionScannerQueue", qos: .userInitiated, attributes: [], autoreleaseFrequency: .workItem)
- var selectedText : Data? //this will be set during the segue
+    private var imageUrl: URL?
+    var selectedText : Data? //this will be set during the segue
+    
+    enum StorageType {
+        case fileSystem
+    }
+    
+
     override func viewDidLoad() {
         super.viewDidLoad()
         if buttonPressed{
@@ -28,6 +38,8 @@ class ProcessedImageViewController: UIViewController, VNDocumentCameraViewContro
         }
         if (textView.text != nil){ //if there is text, we just display it (no other methods are called)
             textView.text = selectedText?.text
+            print("Key is:" + getKey(cellNumber))
+            imageView.image = retrieveImage(forKey: getKey(cellNumber), inStorageType: .fileSystem) //need to find a way to display unique images, not just the last one
         }
     }
     
@@ -108,9 +120,73 @@ class ProcessedImageViewController: UIViewController, VNDocumentCameraViewContro
            } catch {
                print(error)
            }
+        //let newText = Data()
+        //newText.imageKey = getKey()
+        imageUrl = filePath(forKey: getKey()) //creates a unique image URL
+        store(image: image, forKey: getKey(), withStorageType: .fileSystem) //save the image
+        print("Key is:" + getKey())
         
+        //saveImageKey(imageKey: newText) //save to realm for future reference to this specific image
+        //print(newText.imageKey)
         processImage(image)
     }
+
+    //MARK: - Save Image
+    private func store(image: UIImage,
+                        forKey key: String,
+                        withStorageType storageType: StorageType) {
+        if let pngRepresentation = image.pngData() {
+            switch storageType {
+            case .fileSystem:
+                if let filePath = filePath(forKey: key) {
+                    do  {
+                        try pngRepresentation.write(to: filePath,
+                                                    options: .atomic)
+                    } catch let err {
+                        print("Saving file resulted in error: ", err)
+                    }
+                }
+            }
+        }
+    }
+    
+    private func filePath(forKey key: String) -> URL? { //gets the path
+        let fileManager = FileManager.default
+        guard let documentURL = fileManager.urls(for: .documentDirectory,
+                                                in: FileManager.SearchPathDomainMask.userDomainMask).first else { return nil }
+        
+        return documentURL.appendingPathComponent(key + ".png")
+    }
+    
+    func getKey(_ cellNumber: Int) -> String{ //this will regenerate the key for a previously scanned image
+        return ("item" + String(cellNumber))
+    }
+    
+    func getKey() -> String{ //this will create a unique key (name) for each image when we take a new scan
+        /*if let itemCount = (textCount! + 1){
+            let itemCountAsString = String(itemCount)
+            return ( "item" + (itemCountAsString))
+        }*/
+        return("item" + String(textCount!))
+        //return ""
+    }
+    private func retrieveImage(forKey key: String,
+                                inStorageType storageType: StorageType) -> UIImage? {
+        switch storageType {
+        case .fileSystem:
+            if let filePath = self.filePath(forKey: key),
+                let fileData = FileManager.default.contents(atPath: filePath.path),
+                let image = UIImage(data: fileData) {
+                return image
+            }
+            
+        }
+        print("no image found")
+        return nil
+    }
+    
+
+    
 
     func documentCameraViewController(_ controller: VNDocumentCameraViewController, didFailWithError error: Error) {
         print(error)
@@ -142,5 +218,17 @@ class ProcessedImageViewController: UIViewController, VNDocumentCameraViewContro
                 print("Error saving text: \(error)")
             }
         }
+    
+    func saveImageKey(imageKey: Data){
+        do{
+            try realm.write{
+                realm.add(imageKey)
+            }
+        }
+            catch{
+                print("Error saving imageKey: \(error)")
+            }
+    }
+
     
 }
