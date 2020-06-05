@@ -13,7 +13,6 @@
 		50E8468B247F5DE9004E2802 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 50E84689247F5DE9004E2802 /* Main.storyboard */; };
 		50E8468D247F5DEE004E2802 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 50E8468C247F5DEE004E2802 /* Assets.xcassets */; };
 		50E84690247F5DEE004E2802 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 50E8468E247F5DEE004E2802 /* LaunchScreen.storyboard */; };
-		50F3EAA124806EF800C3DCE4 /* ProcessImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50F3EAA024806EF800C3DCE4 /* ProcessImage.swift */; };
 		50F3EAA32480776800C3DCE4 /* ProcessedImageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50F3EAA22480776800C3DCE4 /* ProcessedImageViewController.swift */; };
 		50F3EAA52480A05300C3DCE4 /* Data.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50F3EAA42480A05300C3DCE4 /* Data.swift */; };
 		6C61455595C41BF695F57DF1 /* Pods_Scanner.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F4AB250B0CA1281B557A889 /* Pods_Scanner.framework */; };
@@ -29,7 +28,6 @@
 		50E8468C247F5DEE004E2802 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		50E8468F247F5DEE004E2802 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		50E84691247F5DEE004E2802 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		50F3EAA024806EF800C3DCE4 /* ProcessImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProcessImage.swift; sourceTree = "<group>"; };
 		50F3EAA22480776800C3DCE4 /* ProcessedImageViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProcessedImageViewController.swift; sourceTree = "<group>"; };
 		50F3EAA42480A05300C3DCE4 /* Data.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Data.swift; sourceTree = "<group>"; };
 		5FD1229FA20B8D4F4218C85D /* Pods-Scanner.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Scanner.debug.xcconfig"; path = "Target Support Files/Pods-Scanner/Pods-Scanner.debug.xcconfig"; sourceTree = "<group>"; };
@@ -101,7 +99,6 @@
 		50F3EA9F24806EA000C3DCE4 /* Model */ = {
 			isa = PBXGroup;
 			children = (
-				50F3EAA024806EF800C3DCE4 /* ProcessImage.swift */,
 				50F3EAA42480A05300C3DCE4 /* Data.swift */,
 			);
 			path = Model;
@@ -244,7 +241,6 @@
 				50F3EAA32480776800C3DCE4 /* ProcessedImageViewController.swift in Sources */,
 				50E84684247F5DE9004E2802 /* AppDelegate.swift in Sources */,
 				50E84686247F5DE9004E2802 /* SceneDelegate.swift in Sources */,
-				50F3EAA124806EF800C3DCE4 /* ProcessImage.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

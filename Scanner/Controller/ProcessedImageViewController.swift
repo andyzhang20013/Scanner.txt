@@ -18,7 +18,6 @@ class ProcessedImageViewController: UIViewController, VNDocumentCameraViewContro
     var textRecognitionRequest = VNRecognizeTextRequest(completionHandler: nil)
     var text: Results<Data>?
     var cellNumber: Int = 0 //for referring to existing cells
-    var imageKey: Data?
     var textCount: Int? //for creating new cells
     private let textRecognitionWorkQueue = DispatchQueue(label: "MyVisionScannerQueue", qos: .userInitiated, attributes: [], autoreleaseFrequency: .workItem)
     private var imageUrl: URL?
@@ -28,13 +27,14 @@ class ProcessedImageViewController: UIViewController, VNDocumentCameraViewContro
         case fileSystem
     }
     
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
+        textView.isEditable = false
         if buttonPressed{
             pictureButtonPressed()
             setupVision()
-            textView.isEditable = false
+            
         }
         if (textView.text != nil){ //if there is text, we just display it (no other methods are called)
             textView.text = selectedText?.text
@@ -49,8 +49,8 @@ class ProcessedImageViewController: UIViewController, VNDocumentCameraViewContro
         present(scannerViewController, animated: true)
     }
     
-
-     func setupVision() {
+    //MARK: - Text Recognition Function
+    func setupVision() {
         
         textRecognitionRequest = VNRecognizeTextRequest { (request, error) in
             guard let observations = request.results as? [VNRecognizedTextObservation] else { return }
@@ -67,10 +67,10 @@ class ProcessedImageViewController: UIViewController, VNDocumentCameraViewContro
             self.saveItems(text: newData)
             DispatchQueue.main.async {
                 
-                 self.textView.text = detectedText
-               
-                 self.textView.flashScrollIndicators()
-                 
+                self.textView.text = detectedText
+                
+                self.textView.flashScrollIndicators()
+                
                 
                 //need to send the text & image over to ProcessImage view controller
                 
@@ -80,14 +80,14 @@ class ProcessedImageViewController: UIViewController, VNDocumentCameraViewContro
         
         textRecognitionRequest.recognitionLevel = .accurate
     }
-
+    
     private func processImage(_ image: UIImage) {
         imageView.image = image
         recognizeTextInImage(image)
     }
     
     private func recognizeTextInImage(_ image: UIImage) {
-
+        
         
         guard let cgImage = image.cgImage else { return }
         
@@ -99,11 +99,11 @@ class ProcessedImageViewController: UIViewController, VNDocumentCameraViewContro
             } catch {
                 print(error)
             }
-            }
+        }
         
-
+        
     }
-
+    
     func documentCameraViewController(_ controller: VNDocumentCameraViewController, didFinishWith scan: VNDocumentCameraScan) {
         guard scan.pageCount >= 1 else {
             controller.dismiss(animated: true)
@@ -114,12 +114,12 @@ class ProcessedImageViewController: UIViewController, VNDocumentCameraViewContro
         let newImage = compressedImage(originalImage)
         controller.dismiss(animated: true)
         let image = scan.imageOfPage(at: 0)
-           let handler = VNImageRequestHandler(cgImage: image.cgImage!, options: [:])
-           do {
-               try handler.perform([textRecognitionRequest])
-           } catch {
-               print(error)
-           }
+        let handler = VNImageRequestHandler(cgImage: image.cgImage!, options: [:])
+        do {
+            try handler.perform([textRecognitionRequest])
+        } catch {
+            print(error)
+        }
         //let newText = Data()
         //newText.imageKey = getKey()
         imageUrl = filePath(forKey: getKey()) //creates a unique image URL
@@ -130,11 +130,18 @@ class ProcessedImageViewController: UIViewController, VNDocumentCameraViewContro
         //print(newText.imageKey)
         processImage(image)
     }
-
+    func compressedImage(_ originalImage: UIImage) -> UIImage {
+        guard let imageData = originalImage.jpegData(compressionQuality: 1),
+            let reloadedImage = UIImage(data: imageData) else {
+                return originalImage
+        }
+        return reloadedImage
+    }
+    
     //MARK: - Save Image
     private func store(image: UIImage,
-                        forKey key: String,
-                        withStorageType storageType: StorageType) {
+                       forKey key: String,
+                       withStorageType storageType: StorageType) {
         if let pngRepresentation = image.pngData() {
             switch storageType {
             case .fileSystem:
@@ -153,25 +160,28 @@ class ProcessedImageViewController: UIViewController, VNDocumentCameraViewContro
     private func filePath(forKey key: String) -> URL? { //gets the path
         let fileManager = FileManager.default
         guard let documentURL = fileManager.urls(for: .documentDirectory,
-                                                in: FileManager.SearchPathDomainMask.userDomainMask).first else { return nil }
+                                                 in: FileManager.SearchPathDomainMask.userDomainMask).first else { return nil }
         
         return documentURL.appendingPathComponent(key + ".png")
     }
     
-    func getKey(_ cellNumber: Int) -> String{ //this will regenerate the key for a previously scanned image
-        return ("item" + String(cellNumber))
-    }
+    
     
     func getKey() -> String{ //this will create a unique key (name) for each image when we take a new scan
         /*if let itemCount = (textCount! + 1){
-            let itemCountAsString = String(itemCount)
-            return ( "item" + (itemCountAsString))
-        }*/
+         let itemCountAsString = String(itemCount)
+         return ( "item" + (itemCountAsString))
+         }*/
         return("item" + String(textCount!))
         //return ""
     }
+    
+    //MARK: - Retreive Image
+    func getKey(_ cellNumber: Int) -> String{ //this will regenerate the key for a previously scanned image
+        return ("item" + String(cellNumber))
+    }
     private func retrieveImage(forKey key: String,
-                                inStorageType storageType: StorageType) -> UIImage? {
+                               inStorageType storageType: StorageType) -> UIImage? {
         switch storageType {
         case .fileSystem:
             if let filePath = self.filePath(forKey: key),
@@ -185,50 +195,44 @@ class ProcessedImageViewController: UIViewController, VNDocumentCameraViewContro
         return nil
     }
     
-
     
-
+    //MARK: - DocumentCameraViewController Delegate Methods
+    
     func documentCameraViewController(_ controller: VNDocumentCameraViewController, didFailWithError error: Error) {
         print(error)
         controller.dismiss(animated: true)
         performSegue(withIdentifier: "unwindToCells", sender: self)
     }
-
+    
     func documentCameraViewControllerDidCancel(_ controller: VNDocumentCameraViewController) {
         controller.dismiss(animated: true)
         performSegue(withIdentifier: "unwindToCells", sender: self)
     }
-
-    func compressedImage(_ originalImage: UIImage) -> UIImage {
-        guard let imageData = originalImage.jpegData(compressionQuality: 1),
-            let reloadedImage = UIImage(data: imageData) else {
-                return originalImage
-        }
-        return reloadedImage
-    }
     
     
+    
+    //MARK: - Data Persistence Methods
     func saveItems(text: Data){ //should save after image is processed
         do{
             try realm.write{
                 realm.add(text)
             }
         }
-            catch{
-                print("Error saving text: \(error)")
-            }
+        catch{
+            print("Error saving text: \(error)")
         }
-    
-    func saveImageKey(imageKey: Data){
-        do{
-            try realm.write{
-                realm.add(imageKey)
-            }
-        }
-            catch{
-                print("Error saving imageKey: \(error)")
-            }
     }
-
+    
+    
+    //MARK: - Share Function
+    @IBAction func shareButtonPressed(_ sender: UIBarButtonItem) {
+        //let imageToShare = [UIImage(named: getKey(cellNumber))]
+        //find a way to share images
+        let items = [selectedText?.text]
+         let ac = UIActivityViewController(activityItems: items, applicationActivities: nil)
+        present(ac, animated: true)
+        
+    }
+    
     
 }

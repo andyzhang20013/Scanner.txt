@@ -102,7 +102,13 @@
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="v0u-9m-0Lv"/>
                     </view>
-                    <navigationItem key="navigationItem" id="sus-Zo-YkM"/>
+                    <navigationItem key="navigationItem" id="sus-Zo-YkM">
+                        <barButtonItem key="rightBarButtonItem" title="Share" image="square.and.arrow.up" catalog="system" id="FCH-CQ-oTl">
+                            <connections>
+                                <action selector="shareButtonPressed:" destination="oVQ-vv-8AV" id="fhQ-8B-eFx"/>
+                            </connections>
+                        </barButtonItem>
+                    </navigationItem>
                     <connections>
                         <outlet property="imageView" destination="QZ7-6K-HGF" id="jIh-yP-t2G"/>
                         <outlet property="textView" destination="cZg-uU-1w3" id="PPS-eu-yOC"/>
@@ -135,4 +141,7 @@
     <inferredMetricsTieBreakers>
         <segue reference="BHS-hL-s9y"/>
     </inferredMetricsTieBreakers>
+    <resources>
+        <image name="square.and.arrow.up" catalog="system" width="115" height="128"/>
+    </resources>
 </document>
