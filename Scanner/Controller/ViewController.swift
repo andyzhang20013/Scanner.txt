@@ -10,18 +10,17 @@ import UIKit
 import VisionKit
 import Vision
 import RealmSwift
+import SwipeCellKit
 class ViewController: UITableViewController, VNDocumentCameraViewControllerDelegate {
-    
-    let processedImage = ProcessedImageViewController()
     let realm = try! Realm()
     var text: Results<Data>?
     var imageKey: Results<Data>?
+    var cellNumberChanged: Bool = false
     override func viewDidLoad() {
         super.viewDidLoad()
+        tableView.rowHeight = 80
         loadItems()
     }
-    
-    
     func loadItems(){
         text = realm.objects(Data.self)
         tableView.reloadData()
@@ -29,9 +28,6 @@ class ViewController: UITableViewController, VNDocumentCameraViewControllerDeleg
     override func viewWillAppear(_ animated: Bool) { //if we press the back button, then reload the table
         loadItems()
     }
-    
-    
-    
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) { //always go through here
         let destinationVC = segue.destination as! ProcessedImageViewController
         
@@ -42,6 +38,11 @@ class ViewController: UITableViewController, VNDocumentCameraViewControllerDeleg
                 destinationVC.selectedText = text?[indexPath.row]
                 destinationVC.buttonPressed = false
                 destinationVC.cellNumber = indexPath.row
+                
+                if cellNumberChanged{ //if an item has been deleted, we have to update the reference to the image
+                    destinationVC.cellNumber = indexPath.row - 1
+                    cellNumberChanged = false
+                }
             }
             else{ //if nothing scanned, then automatically launch camera
                 destinationVC.buttonPressed = true
@@ -50,6 +51,7 @@ class ViewController: UITableViewController, VNDocumentCameraViewControllerDeleg
         else{ //if we press the camera button
             destinationVC.buttonPressed = true
         }
+        
     }
     @IBAction func unwind( _ seg: UIStoryboardSegue) { //this function gets called when we press the "cancel" in camera view controller or when we press the back button in the navigation bar
     }
@@ -57,18 +59,59 @@ class ViewController: UITableViewController, VNDocumentCameraViewControllerDeleg
     //MARK: - Tableview Datasource Methods - This creates the cells
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell { //Asks us for a UITableView cell to display -> This will create a new cell for each message
-        let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath)
+        let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath) as! SwipeTableViewCell
         if let item = text?[indexPath.row] {
             cell.textLabel?.text = item.text
         }
         else{
             cell.textLabel?.text = "No text scanned yet"
         }
+        cell.delegate = self
         return cell
     }
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         
         return text?.count ?? 1
     }
+    
+
 }
 
+//MARK: - Swipe Cell Delegate Methods
+extension ViewController: SwipeTableViewCellDelegate{
+    func tableView(_ tableView: UITableView, editActionsForRowAt indexPath: IndexPath, for orientation: SwipeActionsOrientation) -> [SwipeAction]? {
+        guard orientation == .right else { return nil }
+
+        let deleteAction = SwipeAction(style: .destructive, title: "Delete") { action, indexPath in
+            // handle action by updating model with deletion
+            if let textForDeletion = self.text?[indexPath.row]{
+            do{
+                try self.realm.write{
+                    self.realm.delete(textForDeletion)
+                    self.cellNumberChanged = true
+                    //self.processedImage.cellNumber = self.updateCellNumber(self.processedImage.getCellNumber()) //updates position of image
+                }
+                
+            }
+            catch{
+                print("Error deleting category: \(error)")
+            }
+                tableView.reloadData()
+            }
+        }
+
+        // customize the action appearance
+        deleteAction.image = UIImage(named: "delete")
+        
+        return [deleteAction]
+    }
+    func collectionView(_ collectionView: UICollectionView, editActionsOptionsForItemAt indexPath: IndexPath, for orientation: SwipeActionsOrientation) -> SwipeOptions {
+        var options = SwipeOptions()
+        options.expansionStyle = .destructive
+        options.transitionStyle = .border
+        return options
+    }
+    func updateCellNumber(_ cellNumber: Int)-> Int{
+        return(cellNumber - 1)
+    }
+}

@@ -14,15 +14,15 @@ class ProcessedImageViewController: UIViewController, VNDocumentCameraViewContro
     @IBOutlet weak var imageView: UIImageView!
     @IBOutlet weak var textView: UITextView!
     let realm = try! Realm()
+    let spin = SpinnerViewController()
     var buttonPressed: Bool = false
     var textRecognitionRequest = VNRecognizeTextRequest(completionHandler: nil)
     var text: Results<Data>?
-    var cellNumber: Int = 0 //for referring to existing cells
+    var cellNumber: Int? //for referring to existing cells
     var textCount: Int? //for creating new cells
     private let textRecognitionWorkQueue = DispatchQueue(label: "MyVisionScannerQueue", qos: .userInitiated, attributes: [], autoreleaseFrequency: .workItem)
     private var imageUrl: URL?
     var selectedText : Data? //this will be set during the segue
-    
     enum StorageType {
         case fileSystem
     }
@@ -36,12 +36,19 @@ class ProcessedImageViewController: UIViewController, VNDocumentCameraViewContro
             setupVision()
             
         }
-        if (textView.text != nil){ //if there is text, we just display it (no other methods are called)
+        else if (textView.text != nil){ //if there is text, we just display it (no other methods are called)
             textView.text = selectedText?.text
-            print("Key is:" + getKey(cellNumber))
-            imageView.image = retrieveImage(forKey: getKey(cellNumber), inStorageType: .fileSystem) //need to find a way to display unique images, not just the last one
+            print("Key is:" + getKey(cellNumber!))
+            imageView.image = retrieveImage(forKey: getKey(cellNumber!), inStorageType: .fileSystem)
         }
     }
+    /*override func viewWillAppear(_ animated: Bool) {
+        if (textView.text != nil){ //if there is text, we just display it (no other methods are called)
+            textView.text = selectedText?.text
+            print("Key is:" + getKey(cellNumber!))
+            imageView.image = retrieveImage(forKey: getKey(cellNumber!), inStorageType: .fileSystem) //need to find a way to display unique images, not just the last one
+        }
+    }*/
     
     func pictureButtonPressed(){
         let scannerViewController = VNDocumentCameraViewController()
@@ -101,10 +108,10 @@ class ProcessedImageViewController: UIViewController, VNDocumentCameraViewContro
             }
         }
         
-        
     }
     
     func documentCameraViewController(_ controller: VNDocumentCameraViewController, didFinishWith scan: VNDocumentCameraScan) {
+        
         guard scan.pageCount >= 1 else {
             controller.dismiss(animated: true)
             return
@@ -120,24 +127,44 @@ class ProcessedImageViewController: UIViewController, VNDocumentCameraViewContro
         } catch {
             print(error)
         }
-        //let newText = Data()
-        //newText.imageKey = getKey()
         imageUrl = filePath(forKey: getKey()) //creates a unique image URL
         store(image: image, forKey: getKey(), withStorageType: .fileSystem) //save the image
         print("Key is:" + getKey())
         
-        //saveImageKey(imageKey: newText) //save to realm for future reference to this specific image
-        //print(newText.imageKey)
         processImage(image)
     }
+    
     func compressedImage(_ originalImage: UIImage) -> UIImage {
         guard let imageData = originalImage.jpegData(compressionQuality: 1),
             let reloadedImage = UIImage(data: imageData) else {
                 return originalImage
         }
+        
         return reloadedImage
     }
     
+    func startSpinning(){ //loading animation appears while processing image
+        
+        // add the spinner view controller
+        addChild(spin)
+        spin.view.frame = view.frame
+        view.addSubview(spin.view)
+        spin.didMove(toParent: self)
+
+        /*// wait two seconds to simulate some work happening
+        DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+            // then remove the spinner view controller
+            spin.willMove(toParent: nil)
+            spin.view.removeFromSuperview()
+            spin.removeFromParent()
+        }*/
+    }
+    
+    func stopSpinning(){
+        spin.willMove(toParent: nil)
+        spin.view.removeFromSuperview()
+        spin.removeFromParent()
+    }
     //MARK: - Save Image
     private func store(image: UIImage,
                        forKey key: String,
@@ -195,6 +222,9 @@ class ProcessedImageViewController: UIViewController, VNDocumentCameraViewContro
         return nil
     }
     
+    func getCellNumber() -> Int{
+        return (cellNumber!)
+    }
     
     //MARK: - DocumentCameraViewController Delegate Methods
     
@@ -223,6 +253,9 @@ class ProcessedImageViewController: UIViewController, VNDocumentCameraViewContro
         }
     }
     
+    /*func itemDeleted(_ cellNumber: Int) -> Int{
+        //if we delete something, need to find a way to also update the imges
+    }*/
     
     //MARK: - Share Function
     @IBAction func shareButtonPressed(_ sender: UIBarButtonItem) {
