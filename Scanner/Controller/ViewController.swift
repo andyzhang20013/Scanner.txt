@@ -13,6 +13,8 @@ import RealmSwift
 import SwipeCellKit
 class ViewController: UITableViewController, VNDocumentCameraViewControllerDelegate {
     let realm = try! Realm()
+    let image = Image()
+    var cellDeletedRow: Int?
     var text: Results<Data>?
     var imageKey: Results<Data>?
     var cellNumberChanged: Bool = false
@@ -40,7 +42,9 @@ class ViewController: UITableViewController, VNDocumentCameraViewControllerDeleg
                 destinationVC.cellNumber = indexPath.row
                 
                 if cellNumberChanged{ //if an item has been deleted, we have to update the reference to the image
-                    destinationVC.cellNumber = indexPath.row - 1
+                    if indexPath.row > cellDeletedRow!{ //if the cell is below the cell deleted, then reduce the cell number, otherwise do nothing
+                        destinationVC.cellNumber! -= 1
+                    }
                     cellNumberChanged = false
                 }
             }
@@ -69,8 +73,8 @@ class ViewController: UITableViewController, VNDocumentCameraViewControllerDeleg
         cell.delegate = self
         return cell
     }
+    
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        
         return text?.count ?? 1
     }
     
@@ -88,30 +92,44 @@ extension ViewController: SwipeTableViewCellDelegate{
             do{
                 try self.realm.write{
                     self.realm.delete(textForDeletion)
+                    //delete image function
+                    if let imageUrl = self.image.filePath(forKey: self.image.getExistingKey(indexPath.row)){
+                        print(imageUrl)
+                        self.image.deleteImage(imageUrl) //deletes the image
+                        
+                        }
+                    }
+                    self.cellDeletedRow = indexPath.row
                     self.cellNumberChanged = true
                     //self.processedImage.cellNumber = self.updateCellNumber(self.processedImage.getCellNumber()) //updates position of image
                 }
                 
+                catch{
+                    print("Error deleting category: \(error)")
+                }
+                
             }
-            catch{
-                print("Error deleting category: \(error)")
-            }
+            
                 tableView.reloadData()
             }
-        }
-
+        
         // customize the action appearance
         deleteAction.image = UIImage(named: "delete")
         
         return [deleteAction]
-    }
+        }
+
+        
+    
     func collectionView(_ collectionView: UICollectionView, editActionsOptionsForItemAt indexPath: IndexPath, for orientation: SwipeActionsOrientation) -> SwipeOptions {
         var options = SwipeOptions()
         options.expansionStyle = .destructive
         options.transitionStyle = .border
         return options
     }
-    func updateCellNumber(_ cellNumber: Int)-> Int{
-        return(cellNumber - 1)
     }
-}
+    
+    /*func updateCellNumber(_ cellNumber: Int)-> Int{
+        return(cellNumber - 1)
+    }*/
+

@@ -21,12 +21,12 @@ class ProcessedImageViewController: UIViewController, VNDocumentCameraViewContro
     var cellNumber: Int? //for referring to existing cells
     var textCount: Int? //for creating new cells
     private let textRecognitionWorkQueue = DispatchQueue(label: "MyVisionScannerQueue", qos: .userInitiated, attributes: [], autoreleaseFrequency: .workItem)
-    private var imageUrl: URL?
     var selectedText : Data? //this will be set during the segue
+    let image = Image()
+    private var imageUrl: URL?
     enum StorageType {
         case fileSystem
     }
-    
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -38,17 +38,10 @@ class ProcessedImageViewController: UIViewController, VNDocumentCameraViewContro
         }
         else if (textView.text != nil){ //if there is text, we just display it (no other methods are called)
             textView.text = selectedText?.text
-            print("Key is:" + getKey(cellNumber!))
-            imageView.image = retrieveImage(forKey: getKey(cellNumber!), inStorageType: .fileSystem)
+            print("Key is:" + image.getExistingKey(cellNumber!))
+            imageView.image = image.retrieveImage(forKey: image.getExistingKey(cellNumber!), inStorageType: .fileSystem)
         }
     }
-    /*override func viewWillAppear(_ animated: Bool) {
-        if (textView.text != nil){ //if there is text, we just display it (no other methods are called)
-            textView.text = selectedText?.text
-            print("Key is:" + getKey(cellNumber!))
-            imageView.image = retrieveImage(forKey: getKey(cellNumber!), inStorageType: .fileSystem) //need to find a way to display unique images, not just the last one
-        }
-    }*/
     
     func pictureButtonPressed(){
         let scannerViewController = VNDocumentCameraViewController()
@@ -120,18 +113,18 @@ class ProcessedImageViewController: UIViewController, VNDocumentCameraViewContro
         let originalImage = scan.imageOfPage(at: 0)
         let newImage = compressedImage(originalImage)
         controller.dismiss(animated: true)
-        let image = scan.imageOfPage(at: 0)
-        let handler = VNImageRequestHandler(cgImage: image.cgImage!, options: [:])
+        let scannedImage = scan.imageOfPage(at: 0)
+        let handler = VNImageRequestHandler(cgImage: scannedImage.cgImage!, options: [:])
         do {
             try handler.perform([textRecognitionRequest])
         } catch {
             print(error)
         }
-        imageUrl = filePath(forKey: getKey()) //creates a unique image URL
-        store(image: image, forKey: getKey(), withStorageType: .fileSystem) //save the image
-        print("Key is:" + getKey())
+        //imageUrl = image.filePath(forKey: image.getKey()) //creates a unique image URL
+        image.store(image: scannedImage, forKey: image.getNewKey(textCount!), withStorageType: .fileSystem) //save the image
+        //print("Key is:" + image.getKey())
         
-        processImage(image)
+        processImage(newImage)
     }
     
     func compressedImage(_ originalImage: UIImage) -> UIImage {
@@ -165,66 +158,7 @@ class ProcessedImageViewController: UIViewController, VNDocumentCameraViewContro
         spin.view.removeFromSuperview()
         spin.removeFromParent()
     }
-    //MARK: - Save Image
-    private func store(image: UIImage,
-                       forKey key: String,
-                       withStorageType storageType: StorageType) {
-        if let pngRepresentation = image.pngData() {
-            switch storageType {
-            case .fileSystem:
-                if let filePath = filePath(forKey: key) {
-                    do  {
-                        try pngRepresentation.write(to: filePath,
-                                                    options: .atomic)
-                    } catch let err {
-                        print("Saving file resulted in error: ", err)
-                    }
-                }
-            }
-        }
-    }
-    
-    private func filePath(forKey key: String) -> URL? { //gets the path
-        let fileManager = FileManager.default
-        guard let documentURL = fileManager.urls(for: .documentDirectory,
-                                                 in: FileManager.SearchPathDomainMask.userDomainMask).first else { return nil }
-        
-        return documentURL.appendingPathComponent(key + ".png")
-    }
-    
-    
-    
-    func getKey() -> String{ //this will create a unique key (name) for each image when we take a new scan
-        /*if let itemCount = (textCount! + 1){
-         let itemCountAsString = String(itemCount)
-         return ( "item" + (itemCountAsString))
-         }*/
-        return("item" + String(textCount!))
-        //return ""
-    }
-    
-    //MARK: - Retreive Image
-    func getKey(_ cellNumber: Int) -> String{ //this will regenerate the key for a previously scanned image
-        return ("item" + String(cellNumber))
-    }
-    private func retrieveImage(forKey key: String,
-                               inStorageType storageType: StorageType) -> UIImage? {
-        switch storageType {
-        case .fileSystem:
-            if let filePath = self.filePath(forKey: key),
-                let fileData = FileManager.default.contents(atPath: filePath.path),
-                let image = UIImage(data: fileData) {
-                return image
-            }
-            
-        }
-        print("no image found")
-        return nil
-    }
-    
-    func getCellNumber() -> Int{
-        return (cellNumber!)
-    }
+   
     
     //MARK: - DocumentCameraViewController Delegate Methods
     
@@ -238,7 +172,9 @@ class ProcessedImageViewController: UIViewController, VNDocumentCameraViewContro
         controller.dismiss(animated: true)
         performSegue(withIdentifier: "unwindToCells", sender: self)
     }
-    
+    func getCellNumber() -> Int{
+        return (cellNumber!)
+    }
     
     
     //MARK: - Data Persistence Methods
