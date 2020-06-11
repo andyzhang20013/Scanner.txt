@@ -505,6 +505,11 @@ Prohibited Jurisdiction, or otherwise in violation of any such restrictions or
 regulations.
 
 
+## SpinningIndicator
+
+Copyright (c) 2019 Toshihiro Yamazaki <yamazaki.toshihiro@icloud.com>
+
+
 ## SwipeCellKit
 
 MIT License 

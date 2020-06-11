@@ -22,6 +22,7 @@ class ViewController: UITableViewController, VNDocumentCameraViewControllerDeleg
         super.viewDidLoad()
         tableView.rowHeight = 80
         loadItems()
+        navigationItem.title = "My Scans"
     }
     func loadItems(){
         text = realm.objects(Data.self)
@@ -41,12 +42,12 @@ class ViewController: UITableViewController, VNDocumentCameraViewControllerDeleg
                 destinationVC.buttonPressed = false
                 destinationVC.cellNumber = indexPath.row
                 
-                if cellNumberChanged{ //if an item has been deleted, we have to update the reference to the image
+                /*if cellNumberChanged{ //if an item has been deleted, we have to update the reference to the image
                     if indexPath.row > cellDeletedRow!{ //if the cell is below the cell deleted, then reduce the cell number, otherwise do nothing
                         destinationVC.cellNumber! -= 1
                     }
                     cellNumberChanged = false
-                }
+                }*/
             }
             else{ //if nothing scanned, then automatically launch camera
                 destinationVC.buttonPressed = true
@@ -94,23 +95,18 @@ extension ViewController: SwipeTableViewCellDelegate{
                     self.realm.delete(textForDeletion)
                     //delete image function
                     if let imageUrl = self.image.filePath(forKey: self.image.getExistingKey(indexPath.row)){
-                        print(imageUrl)
                         self.image.deleteImage(imageUrl) //deletes the image
-                        
                         }
                     }
-                    self.cellDeletedRow = indexPath.row
-                    self.cellNumberChanged = true
-                    //self.processedImage.cellNumber = self.updateCellNumber(self.processedImage.getCellNumber()) //updates position of image
                 }
                 
                 catch{
                     print("Error deleting category: \(error)")
                 }
+                 tableView.reloadData()
                 
             }
-            
-                tableView.reloadData()
+           
             }
         
         // customize the action appearance
@@ -127,7 +123,7 @@ extension ViewController: SwipeTableViewCellDelegate{
         options.transitionStyle = .border
         return options
     }
-    }
+}
     
     /*func updateCellNumber(_ cellNumber: Int)-> Int{
         return(cellNumber - 1)

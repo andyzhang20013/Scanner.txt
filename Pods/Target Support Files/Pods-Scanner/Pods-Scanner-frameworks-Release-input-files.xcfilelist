@@ -1,4 +1,5 @@
 ${PODS_ROOT}/Target Support Files/Pods-Scanner/Pods-Scanner-frameworks.sh
 ${BUILT_PRODUCTS_DIR}/Realm/Realm.framework
 ${BUILT_PRODUCTS_DIR}/RealmSwift/RealmSwift.framework
+${BUILT_PRODUCTS_DIR}/SpinningIndicator/SpinningIndicator.framework
 ${BUILT_PRODUCTS_DIR}/SwipeCellKit/SwipeCellKit.framework

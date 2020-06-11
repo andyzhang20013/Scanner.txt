@@ -74,7 +74,7 @@ struct Image{
        
        
        
-       //MARK: - Delete Images
+       //MARK: - Delete Image
        func deleteImage(_ url: URL){
            do{
            let fileManager = FileManager.default

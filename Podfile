@@ -8,4 +8,5 @@ target 'Scanner' do
   # Pods for Scanner
   pod 'RealmSwift'
   pod 'SwipeCellKit'
+  pod 'SpinningIndicator'
 end

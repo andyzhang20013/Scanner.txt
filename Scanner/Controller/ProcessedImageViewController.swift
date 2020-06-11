@@ -10,11 +10,14 @@ import UIKit
 import Vision
 import VisionKit
 import RealmSwift
+import SpinningIndicator
 class ProcessedImageViewController: UIViewController, VNDocumentCameraViewControllerDelegate{
     @IBOutlet weak var imageView: UIImageView!
     @IBOutlet weak var textView: UITextView!
     let realm = try! Realm()
-    let spin = SpinnerViewController()
+    //let spin = SpinnerViewController()
+    
+    let indicator = SpinningIndicator(frame: UIScreen.main.bounds)
     var buttonPressed: Bool = false
     var textRecognitionRequest = VNRecognizeTextRequest(completionHandler: nil)
     var text: Results<Data>?
@@ -31,6 +34,9 @@ class ProcessedImageViewController: UIViewController, VNDocumentCameraViewContro
     override func viewDidLoad() {
         super.viewDidLoad()
         textView.isEditable = false
+        textView.isScrollEnabled = true
+        textView.isUserInteractionEnabled = true
+        navigationItem.largeTitleDisplayMode = .never
         if buttonPressed{
             pictureButtonPressed()
             setupVision()
@@ -41,18 +47,24 @@ class ProcessedImageViewController: UIViewController, VNDocumentCameraViewContro
             print("Key is:" + image.getExistingKey(cellNumber!))
             imageView.image = image.retrieveImage(forKey: image.getExistingKey(cellNumber!), inStorageType: .fileSystem)
         }
+        view.addSubview(indicator)
+        indicator.addCircle(lineColor: UIColor(red: 255/255, green: 91/255, blue: 25/255, alpha: 1), lineWidth: 2, radius: 16, angle: 0)
+        indicator.addCircle(lineColor: UIColor.orange, lineWidth: 2, radius: 19, angle: CGFloat.pi)
     }
     
     func pictureButtonPressed(){
         let scannerViewController = VNDocumentCameraViewController()
         scannerViewController.delegate = self
         present(scannerViewController, animated: true)
+        //loading animation
+        indicator.beginAnimating()
     }
     
     //MARK: - Text Recognition Function
     func setupVision() {
         
         textRecognitionRequest = VNRecognizeTextRequest { (request, error) in
+           
             guard let observations = request.results as? [VNRecognizedTextObservation] else { return }
             var detectedText = ""
             for observation in observations {
@@ -66,28 +78,20 @@ class ProcessedImageViewController: UIViewController, VNDocumentCameraViewContro
             newData.text = detectedText
             self.saveItems(text: newData)
             DispatchQueue.main.async {
-                
                 self.textView.text = detectedText
-                
                 self.textView.flashScrollIndicators()
-                
-                
-                //need to send the text & image over to ProcessImage view controller
-                
-                
             }
         }
-        
         textRecognitionRequest.recognitionLevel = .accurate
     }
     
     private func processImage(_ image: UIImage) {
+        
         imageView.image = image
         recognizeTextInImage(image)
     }
     
     private func recognizeTextInImage(_ image: UIImage) {
-        
         
         guard let cgImage = image.cgImage else { return }
         
@@ -100,7 +104,7 @@ class ProcessedImageViewController: UIViewController, VNDocumentCameraViewContro
                 print(error)
             }
         }
-        
+        indicator.endAnimating()
     }
     
     func documentCameraViewController(_ controller: VNDocumentCameraViewController, didFinishWith scan: VNDocumentCameraScan) {
@@ -110,9 +114,13 @@ class ProcessedImageViewController: UIViewController, VNDocumentCameraViewContro
             return
         }
         
+        
+        
         let originalImage = scan.imageOfPage(at: 0)
         let newImage = compressedImage(originalImage)
         controller.dismiss(animated: true)
+        
+        
         let scannedImage = scan.imageOfPage(at: 0)
         let handler = VNImageRequestHandler(cgImage: scannedImage.cgImage!, options: [:])
         do {
@@ -123,6 +131,8 @@ class ProcessedImageViewController: UIViewController, VNDocumentCameraViewContro
         //imageUrl = image.filePath(forKey: image.getKey()) //creates a unique image URL
         image.store(image: scannedImage, forKey: image.getNewKey(textCount!), withStorageType: .fileSystem) //save the image
         //print("Key is:" + image.getKey())
+        
+        
         
         processImage(newImage)
     }
@@ -136,7 +146,7 @@ class ProcessedImageViewController: UIViewController, VNDocumentCameraViewContro
         return reloadedImage
     }
     
-    func startSpinning(){ //loading animation appears while processing image
+    /*func startSpinning(){ //loading animation appears while processing image
         
         // add the spinner view controller
         addChild(spin)
@@ -157,7 +167,7 @@ class ProcessedImageViewController: UIViewController, VNDocumentCameraViewContro
         spin.willMove(toParent: nil)
         spin.view.removeFromSuperview()
         spin.removeFromParent()
-    }
+    }*/
    
     
     //MARK: - DocumentCameraViewController Delegate Methods

@@ -4,23 +4,27 @@ PODS:
   - Realm/Headers (4.4.1)
   - RealmSwift (4.4.1):
     - Realm (= 4.4.1)
+  - SpinningIndicator (0.1.5)
   - SwipeCellKit (2.7.1)
 
 DEPENDENCIES:
   - RealmSwift
+  - SpinningIndicator
   - SwipeCellKit
 
 SPEC REPOS:
   trunk:
     - Realm
     - RealmSwift
+    - SpinningIndicator
     - SwipeCellKit
 
 SPEC CHECKSUMS:
   Realm: 4eb04d7487bd43c0581256f40b424eafb711deff
   RealmSwift: 3eb8924ff7100df5928c7602f71d0fec51e7c9c5
+  SpinningIndicator: 2f3a8b1f3aa23fc68b513231c9421872959df6df
   SwipeCellKit: 3972254a826da74609926daf59b08d6c72e619ea
 
-PODFILE CHECKSUM: b877a6207cd600056545c511097037e51bead7aa
+PODFILE CHECKSUM: 2f6c8b61ca2cd28a7d95a90e265088f5928c615a
 
 COCOAPODS: 1.9.1
