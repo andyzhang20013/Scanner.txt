@@ -14,9 +14,10 @@ import SpinningIndicator
 class ProcessedImageViewController: UIViewController, VNDocumentCameraViewControllerDelegate{
     @IBOutlet weak var imageView: UIImageView!
     @IBOutlet weak var textView: UITextView!
+    
     let realm = try! Realm()
     //let spin = SpinnerViewController()
-    
+    let alert = UIAlertController(title: nil, message: "Scanning for Text", preferredStyle: .alert)
     let indicator = SpinningIndicator(frame: UIScreen.main.bounds)
     var buttonPressed: Bool = false
     var textRecognitionRequest = VNRecognizeTextRequest(completionHandler: nil)
@@ -47,9 +48,9 @@ class ProcessedImageViewController: UIViewController, VNDocumentCameraViewContro
             print("Key is:" + image.getExistingKey(cellNumber!))
             imageView.image = image.retrieveImage(forKey: image.getExistingKey(cellNumber!), inStorageType: .fileSystem)
         }
-        view.addSubview(indicator)
+        /*view.addSubview(indicator)
         indicator.addCircle(lineColor: UIColor(red: 255/255, green: 91/255, blue: 25/255, alpha: 1), lineWidth: 2, radius: 16, angle: 0)
-        indicator.addCircle(lineColor: UIColor.orange, lineWidth: 2, radius: 19, angle: CGFloat.pi)
+        indicator.addCircle(lineColor: UIColor.orange, lineWidth: 2, radius: 19, angle: CGFloat.pi)*/
     }
     
     func pictureButtonPressed(){
@@ -57,7 +58,8 @@ class ProcessedImageViewController: UIViewController, VNDocumentCameraViewContro
         scannerViewController.delegate = self
         present(scannerViewController, animated: true)
         //loading animation
-        indicator.beginAnimating()
+        //indicator.beginAnimating()
+        
     }
     
     //MARK: - Text Recognition Function
@@ -104,11 +106,24 @@ class ProcessedImageViewController: UIViewController, VNDocumentCameraViewContro
                 print(error)
             }
         }
-        indicator.endAnimating()
+        //dismiss(animated: false, completion: nil)
+        //indicator.endAnimating()
     }
+    
+    
     
     func documentCameraViewController(_ controller: VNDocumentCameraViewController, didFinishWith scan: VNDocumentCameraScan) {
         
+       //Loading animation - need to figure out where this goes
+        /*DispatchQueue.main.async {
+            let loadingIndicator = UIActivityIndicatorView(frame: CGRect(x: 10, y: 5, width: 50, height: 50))
+            loadingIndicator.hidesWhenStopped = true
+            loadingIndicator.style = UIActivityIndicatorView.Style.medium
+            loadingIndicator.startAnimating()
+
+            self.alert.view.addSubview(loadingIndicator)
+            self.present(self.alert, animated: true, completion: nil)
+        }*/
         guard scan.pageCount >= 1 else {
             controller.dismiss(animated: true)
             return

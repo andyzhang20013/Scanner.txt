@@ -34,6 +34,7 @@
                         </connections>
                     </tableView>
                     <navigationItem key="navigationItem" title="Scanner" id="aPG-Tl-9bw">
+                        <barButtonItem key="leftBarButtonItem" title="Scan Existing Image" id="WPZ-zp-R9G"/>
                         <barButtonItem key="rightBarButtonItem" systemItem="camera" id="ggN-g9-zIE">
                             <connections>
                                 <segue destination="oVQ-vv-8AV" kind="show" identifier="takeNewPicture" id="BHS-hL-s9y"/>
@@ -71,31 +72,46 @@
                                             <constraint firstItem="QZ7-6K-HGF" firstAttribute="leading" secondItem="u0d-AK-GJ9" secondAttribute="leading" id="qIO-UY-iah"/>
                                         </constraints>
                                     </view>
-                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Gdz-c3-Nbj" userLabel="TextView">
+                                    <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Ufe-Op-sat">
                                         <rect key="frame" x="0.0" y="338.66666666666674" width="375" height="333.33333333333326"/>
                                         <subviews>
-                                            <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" editable="NO" textAlignment="natural" translatesAutoresizingMaskIntoConstraints="NO" id="cZg-uU-1w3">
-                                                <rect key="frame" x="16" y="16" width="343" height="267.33333333333331"/>
+                                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="X4C-QP-8uB">
+                                                <rect key="frame" x="0.0" y="0.0" width="375" height="333"/>
+                                                <subviews>
+                                                    <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" scrollEnabled="NO" editable="NO" textAlignment="natural" translatesAutoresizingMaskIntoConstraints="NO" id="vlo-x7-cwy">
+                                                        <rect key="frame" x="2" y="0.0" width="371" height="331"/>
+                                                        <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                                                        <color key="textColor" systemColor="labelColor" cocoaTouchSystemColor="darkTextColor"/>
+                                                        <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                                        <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
+                                                    </textView>
+                                                </subviews>
                                                 <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
-                                                <color key="textColor" systemColor="labelColor" cocoaTouchSystemColor="darkTextColor"/>
-                                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                                                <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
-                                            </textView>
+                                                <constraints>
+                                                    <constraint firstItem="vlo-x7-cwy" firstAttribute="leading" secondItem="X4C-QP-8uB" secondAttribute="leading" constant="2" id="0PD-PX-DRt"/>
+                                                    <constraint firstAttribute="bottom" secondItem="vlo-x7-cwy" secondAttribute="bottom" constant="2" id="8Ei-NQ-HV9"/>
+                                                    <constraint firstItem="vlo-x7-cwy" firstAttribute="top" secondItem="X4C-QP-8uB" secondAttribute="top" id="f0v-FA-E8X"/>
+                                                    <constraint firstAttribute="trailing" secondItem="vlo-x7-cwy" secondAttribute="trailing" constant="2" id="wEE-TT-X3w"/>
+                                                </constraints>
+                                            </view>
                                         </subviews>
-                                        <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                                         <constraints>
-                                            <constraint firstAttribute="bottomMargin" secondItem="cZg-uU-1w3" secondAttribute="bottom" constant="8" id="FEd-qO-5gh"/>
-                                            <constraint firstItem="cZg-uU-1w3" firstAttribute="top" secondItem="Gdz-c3-Nbj" secondAttribute="topMargin" constant="8" id="VUj-tX-3zU"/>
-                                            <constraint firstItem="cZg-uU-1w3" firstAttribute="leading" secondItem="Gdz-c3-Nbj" secondAttribute="leadingMargin" constant="8" id="aLl-3T-e1B"/>
-                                            <constraint firstAttribute="trailingMargin" secondItem="cZg-uU-1w3" secondAttribute="trailing" constant="8" id="xB1-6T-cUh"/>
+                                            <constraint firstAttribute="bottom" secondItem="X4C-QP-8uB" secondAttribute="bottom" constant="0.33333333333325754" id="OxP-bO-z14"/>
+                                            <constraint firstItem="X4C-QP-8uB" firstAttribute="width" secondItem="Ufe-Op-sat" secondAttribute="width" id="Xib-eU-h5t"/>
+                                            <constraint firstItem="9r6-ii-fFl" firstAttribute="bottom" secondItem="X4C-QP-8uB" secondAttribute="bottom" constant="0.33000000000000002" id="drV-vb-D8B"/>
+                                            <constraint firstItem="X4C-QP-8uB" firstAttribute="top" secondItem="Ufe-Op-sat" secondAttribute="top" id="e7D-w5-lIf"/>
+                                            <constraint firstItem="X4C-QP-8uB" firstAttribute="leading" secondItem="Ufe-Op-sat" secondAttribute="leading" id="nCH-1a-fz1"/>
+                                            <constraint firstAttribute="trailing" secondItem="X4C-QP-8uB" secondAttribute="trailing" id="rtq-Yq-yaF"/>
                                         </constraints>
-                                    </view>
+                                        <viewLayoutGuide key="contentLayoutGuide" id="vUz-uF-AZH"/>
+                                        <viewLayoutGuide key="frameLayoutGuide" id="9r6-ii-fFl"/>
+                                    </scrollView>
                                 </subviews>
                                 <constraints>
-                                    <constraint firstItem="Gdz-c3-Nbj" firstAttribute="leading" secondItem="z6o-yi-pVU" secondAttribute="leading" id="8dv-Ts-ywL"/>
-                                    <constraint firstAttribute="bottom" secondItem="Gdz-c3-Nbj" secondAttribute="bottom" id="INu-WF-79Q"/>
-                                    <constraint firstAttribute="trailing" secondItem="Gdz-c3-Nbj" secondAttribute="trailing" id="bPj-WG-QKL"/>
-                                    <constraint firstItem="Gdz-c3-Nbj" firstAttribute="top" secondItem="u0d-AK-GJ9" secondAttribute="bottom" constant="5" id="poa-8b-mjr"/>
+                                    <constraint firstAttribute="bottom" secondItem="Ufe-Op-sat" secondAttribute="bottom" id="8rV-fh-Fg8"/>
+                                    <constraint firstItem="Ufe-Op-sat" firstAttribute="leading" secondItem="z6o-yi-pVU" secondAttribute="leading" id="bFC-Qg-atl"/>
+                                    <constraint firstAttribute="trailing" secondItem="Ufe-Op-sat" secondAttribute="trailing" id="ek3-6d-ylF"/>
+                                    <constraint firstItem="Ufe-Op-sat" firstAttribute="top" secondItem="u0d-AK-GJ9" secondAttribute="bottom" constant="5" id="vMW-MM-kzJ"/>
                                 </constraints>
                             </stackView>
                         </subviews>
@@ -117,7 +133,7 @@
                     </navigationItem>
                     <connections>
                         <outlet property="imageView" destination="QZ7-6K-HGF" id="jIh-yP-t2G"/>
-                        <outlet property="textView" destination="cZg-uU-1w3" id="PPS-eu-yOC"/>
+                        <outlet property="textView" destination="vlo-x7-cwy" id="Hek-EL-YEA"/>
                         <segue destination="Wjf-hK-xPJ" kind="unwind" identifier="unwindToCells" unwindAction="unwind:" id="kPq-Ib-xoq"/>
                         <segue destination="Wjf-hK-xPJ" kind="unwind" identifier="backButtonPressed" unwindAction="unwind:" id="HxM-cH-niQ"/>
                     </connections>
@@ -125,7 +141,7 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="cIy-F7-dMD" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
                 <exit id="Wjf-hK-xPJ" userLabel="Exit" sceneMemberID="exit"/>
             </objects>
-            <point key="canvasLocation" x="3807.2463768115945" y="-104.46428571428571"/>
+            <point key="canvasLocation" x="3807.1999999999998" y="-104.92610837438424"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="K7q-G1-GkZ">
