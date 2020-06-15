@@ -10,13 +10,11 @@ import UIKit
 import VisionKit
 import Vision
 import RealmSwift
-import SwipeCellKit
 class ViewController: UITableViewController, VNDocumentCameraViewControllerDelegate {
     let realm = try! Realm()
     let image = Image()
     var cellDeletedRow: Int?
     var text: Results<Data>?
-    var imageKey: Results<Data>?
     var cellNumberChanged: Bool = false
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -26,11 +24,14 @@ class ViewController: UITableViewController, VNDocumentCameraViewControllerDeleg
     }
     func loadItems(){
         text = realm.objects(Data.self)
+        text = text!.sorted(byKeyPath: "date", ascending: false)
+        //print(text) //Realm is returning the new data in a incorrect order
         tableView.reloadData()
     }
     override func viewWillAppear(_ animated: Bool) { //if we press the back button, then reload the table
         loadItems()
     }
+    
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) { //always go through here
         let destinationVC = segue.destination as! ProcessedImageViewController
         
@@ -64,14 +65,14 @@ class ViewController: UITableViewController, VNDocumentCameraViewControllerDeleg
     //MARK: - Tableview Datasource Methods - This creates the cells
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell { //Asks us for a UITableView cell to display -> This will create a new cell for each message
-        let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath) as! SwipeTableViewCell
+        let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath)// as! SwipeTableViewCell
         if let item = text?[indexPath.row] {
             cell.textLabel?.text = item.text
         }
         else{
             cell.textLabel?.text = "No text scanned yet"
         }
-        cell.delegate = self
+        //cell.delegate = self
         return cell
     }
     
@@ -79,11 +80,36 @@ class ViewController: UITableViewController, VNDocumentCameraViewControllerDeleg
         return text?.count ?? 1
     }
     
-
+    override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
+        if editingStyle == UITableViewCell.EditingStyle.delete {
+            if let textForDeletion = self.text?[indexPath.row]{
+                do{
+                try self.realm.write{
+                    self.realm.delete(textForDeletion)
+                    //delete image function
+                    if let imageUrl = self.image.filePath(forKey: self.image.getExistingKey(indexPath.row)){
+                        self.image.deleteImage(imageUrl) //deletes the image
+                        }
+                    self.image.deleteImageKey(indexPath.row + 1)
+                    }
+                }
+                
+                catch{
+                    print("Error deleting image and/or text: \(error)")
+                }
+            }
+            tableView.deleteRows(at: [indexPath], with: UITableView.RowAnimation.automatic)
+            loadItems()
+            print("After Deletion: \n\(text)")
+        }
+    }
+    
+   
+   
 }
 
 //MARK: - Swipe Cell Delegate Methods
-extension ViewController: SwipeTableViewCellDelegate{
+/*extension ViewController: SwipeTableViewCellDelegate{
     func tableView(_ tableView: UITableView, editActionsForRowAt indexPath: IndexPath, for orientation: SwipeActionsOrientation) -> [SwipeAction]? {
         guard orientation == .right else { return nil }
 
@@ -128,4 +154,4 @@ extension ViewController: SwipeTableViewCellDelegate{
     /*func updateCellNumber(_ cellNumber: Int)-> Int{
         return(cellNumber - 1)
     }*/
-
+*/

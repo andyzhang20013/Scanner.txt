@@ -12,4 +12,6 @@ import RealmSwift
 class Data: Object{
     @objc dynamic var text: String = ""
     @objc dynamic var imageKey: String = ""
+    @objc dynamic var date = NSDate().timeIntervalSince1970
+
 }

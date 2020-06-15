@@ -8,10 +8,21 @@
 
 import Foundation
 import UIKit
+import RealmSwift
 struct Image{
     enum StorageType {
         case fileSystem
     }
+    let realm = try! Realm()
+    var imageName: Results<Data>?{
+        didSet{ //every time imageKey is updated, this will be called
+            imageName = realm.objects(Data.self)
+            imageName = imageName!.sorted(byKeyPath: "date", ascending: false)
+            print(imageName)
+        }
+    }
+    
+    
     //MARK: - Save Image
         func store(image: UIImage,
                           forKey key: String,
@@ -21,10 +32,11 @@ struct Image{
                case .fileSystem:
                    if let filePath = filePath(forKey: key) {
                        do  {
+                        print("Key before storing is: " + key) //the key is correctly associated with the image, image is still accessible by key
                            try pngRepresentation.write(to: filePath,
                                                        options: .atomic)
-                       } catch let err {
-                           print("Saving file resulted in error: ", err)
+                       } catch let error {
+                           print("Error saving image: ", error)
                        }
                    }
                }
@@ -41,18 +53,21 @@ struct Image{
        
        
        
-    func getNewKey(_ textCount: Int) -> String{ //this will create a unique key (name) for each image when we take a new scan
-           /*if let itemCount = (textCount! + 1){
-            let itemCountAsString = String(itemCount)
-            return ( "item" + (itemCountAsString))
-            }*/
-           return("item" + String(textCount))
-           //return ""
+    mutating func getNewKey(_ textCount: Int) -> String{ //this will create a unique key (name) for each image when we take a new scan
+        let newData = Data()
+        newData.imageKey = "item" + String(textCount)
+        saveImageKey(newData)
+        return( "item" + String(textCount))
        }
        
        //MARK: - Retreive Image
        func getExistingKey(_ cellNumber: Int) -> String{ //this will regenerate the key for a previously scanned image
-           return ("item" + String(cellNumber))
+        //print("ImageKey from Realm is:" + String(imageKey?[cellNumber].imageKey) ?? "")
+        if let existingKey = imageName?[cellNumber-1].imageKey{ //subtract 1 to get the index
+            return existingKey
+        }
+        print(imageName) //Nothing is being stored in imageName (returned as nil)
+        return "no key found"
        }
         
         
@@ -67,6 +82,7 @@ struct Image{
                }
                
            }
+           print("Key:" +  getExistingKey(0)) //key can't be found
            print("no image found")
            return nil
        }
@@ -74,7 +90,7 @@ struct Image{
        
        
        
-       //MARK: - Delete Image
+       //MARK: - Delete Image & imageKey
        func deleteImage(_ url: URL){
            do{
            let fileManager = FileManager.default
@@ -85,4 +101,30 @@ struct Image{
            }
        }
        
+    
+    func deleteImageKey(_ cellNumber: Int){
+        if let imageKeyForDeletion = self.imageName?[cellNumber - 1]{
+            do{
+            try self.realm.write{
+                self.realm.delete(imageKeyForDeletion)
+                }
+            }
+            
+            catch{
+                print("Error deleting imageKey: \(error)")
+            }
+        }
+    }
+    
+    //MARK: - Save ImageKey
+    func saveImageKey(_ imageKey: Data){
+        do{
+            try realm.write{
+                realm.add(imageKey)
+            }
+        }
+        catch{
+            print("Error saving imageKey: \(error)")
+        }
+    }
 }

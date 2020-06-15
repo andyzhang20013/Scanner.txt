@@ -21,12 +21,12 @@ class ProcessedImageViewController: UIViewController, VNDocumentCameraViewContro
     let indicator = SpinningIndicator(frame: UIScreen.main.bounds)
     var buttonPressed: Bool = false
     var textRecognitionRequest = VNRecognizeTextRequest(completionHandler: nil)
-    var text: Results<Data>?
+    
     var cellNumber: Int? //for referring to existing cells
     var textCount: Int? //for creating new cells
     private let textRecognitionWorkQueue = DispatchQueue(label: "MyVisionScannerQueue", qos: .userInitiated, attributes: [], autoreleaseFrequency: .workItem)
     var selectedText : Data? //this will be set during the segue
-    let image = Image()
+    var image = Image()
     private var imageUrl: URL?
     enum StorageType {
         case fileSystem
@@ -47,6 +47,7 @@ class ProcessedImageViewController: UIViewController, VNDocumentCameraViewContro
             textView.text = selectedText?.text
             print("Key is:" + image.getExistingKey(cellNumber!))
             imageView.image = image.retrieveImage(forKey: image.getExistingKey(cellNumber!), inStorageType: .fileSystem)
+            //imageView.image = image.retrieveImage(forKey: "item11", inStorageType: .fileSystem)
         }
         /*view.addSubview(indicator)
         indicator.addCircle(lineColor: UIColor(red: 255/255, green: 91/255, blue: 25/255, alpha: 1), lineWidth: 2, radius: 16, angle: 0)
@@ -78,7 +79,7 @@ class ProcessedImageViewController: UIViewController, VNDocumentCameraViewContro
             }
             let newData = Data()
             newData.text = detectedText
-            self.saveItems(text: newData)
+            self.saveItems(newData)
             DispatchQueue.main.async {
                 self.textView.text = detectedText
                 self.textView.flashScrollIndicators()
@@ -88,7 +89,6 @@ class ProcessedImageViewController: UIViewController, VNDocumentCameraViewContro
     }
     
     private func processImage(_ image: UIImage) {
-        
         imageView.image = image
         recognizeTextInImage(image)
     }
@@ -197,13 +197,11 @@ class ProcessedImageViewController: UIViewController, VNDocumentCameraViewContro
         controller.dismiss(animated: true)
         performSegue(withIdentifier: "unwindToCells", sender: self)
     }
-    func getCellNumber() -> Int{
-        return (cellNumber!)
-    }
+    
     
     
     //MARK: - Data Persistence Methods
-    func saveItems(text: Data){ //should save after image is processed
+    func saveItems(_ text: Data){ //should save after image is processed
         do{
             try realm.write{
                 realm.add(text)
