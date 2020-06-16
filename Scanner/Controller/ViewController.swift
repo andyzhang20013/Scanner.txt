@@ -14,7 +14,7 @@ class ViewController: UITableViewController, VNDocumentCameraViewControllerDeleg
     let realm = try! Realm()
     let image = Image()
     var cellDeletedRow: Int?
-    var text: Results<Data>?
+    var text: Results<textData>?
     var cellNumberChanged: Bool = false
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -23,7 +23,7 @@ class ViewController: UITableViewController, VNDocumentCameraViewControllerDeleg
         navigationItem.title = "My Scans"
     }
     func loadItems(){
-        text = realm.objects(Data.self)
+        text = realm.objects(textData.self)
         text = text!.sorted(byKeyPath: "date", ascending: false)
         //print(text) //Realm is returning the new data in a incorrect order
         tableView.reloadData()
@@ -42,7 +42,6 @@ class ViewController: UITableViewController, VNDocumentCameraViewControllerDeleg
                 destinationVC.selectedText = text?[indexPath.row]
                 destinationVC.buttonPressed = false
                 destinationVC.cellNumber = indexPath.row
-                
                 /*if cellNumberChanged{ //if an item has been deleted, we have to update the reference to the image
                     if indexPath.row > cellDeletedRow!{ //if the cell is below the cell deleted, then reduce the cell number, otherwise do nothing
                         destinationVC.cellNumber! -= 1

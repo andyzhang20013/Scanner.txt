@@ -14,9 +14,9 @@ struct Image{
         case fileSystem
     }
     let realm = try! Realm()
-    var imageName: Results<Data>?{
+    var imageName: Results<textData>?{
         didSet{ //every time imageKey is updated, this will be called
-            imageName = realm.objects(Data.self)
+            imageName = realm.objects(textData.self)
             imageName = imageName!.sorted(byKeyPath: "date", ascending: false)
             print(imageName)
         }
@@ -47,16 +47,15 @@ struct Image{
            let fileManager = FileManager.default
            guard let documentURL = fileManager.urls(for: .documentDirectory,
                                                     in: FileManager.SearchPathDomainMask.userDomainMask).first else { return nil }
-           
            return documentURL.appendingPathComponent(key + ".png")
        }
        
        
        
     mutating func getNewKey(_ textCount: Int) -> String{ //this will create a unique key (name) for each image when we take a new scan
-        let newData = Data()
-        newData.imageKey = "item" + String(textCount)
-        saveImageKey(newData)
+        let newImageData = textData()
+        newImageData.imageKey = "item" + String(textCount)
+        saveImageKey(newImageData)
         return( "item" + String(textCount))
        }
        
@@ -82,7 +81,6 @@ struct Image{
                }
                
            }
-           print("Key:" +  getExistingKey(0)) //key can't be found
            print("no image found")
            return nil
        }
@@ -117,7 +115,7 @@ struct Image{
     }
     
     //MARK: - Save ImageKey
-    func saveImageKey(_ imageKey: Data){
+    func saveImageKey(_ imageKey: textData){
         do{
             try realm.write{
                 realm.add(imageKey)

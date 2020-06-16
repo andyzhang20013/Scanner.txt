@@ -25,7 +25,8 @@ class ProcessedImageViewController: UIViewController, VNDocumentCameraViewContro
     var cellNumber: Int? //for referring to existing cells
     var textCount: Int? //for creating new cells
     private let textRecognitionWorkQueue = DispatchQueue(label: "MyVisionScannerQueue", qos: .userInitiated, attributes: [], autoreleaseFrequency: .workItem)
-    var selectedText : Data? //this will be set during the segue
+    var selectedText : textData? //this will be set during the segue
+    //var selectedImageKey: textData?
     var image = Image()
     private var imageUrl: URL?
     enum StorageType {
@@ -47,7 +48,14 @@ class ProcessedImageViewController: UIViewController, VNDocumentCameraViewContro
             textView.text = selectedText?.text
             print("Key is:" + image.getExistingKey(cellNumber!))
             imageView.image = image.retrieveImage(forKey: image.getExistingKey(cellNumber!), inStorageType: .fileSystem)
-            //imageView.image = image.retrieveImage(forKey: "item11", inStorageType: .fileSystem)
+            //imageView.image = image.retrieveImage(forKey: "item0", inStorageType: .fileSystem)
+            if let imageKey = selectedText?.imageKey{
+            print(imageKey)
+            imageView.image = image.retrieveImage(forKey: imageKey, inStorageType: .fileSystem)
+               
+            }
+            
+            
         }
         /*view.addSubview(indicator)
         indicator.addCircle(lineColor: UIColor(red: 255/255, green: 91/255, blue: 25/255, alpha: 1), lineWidth: 2, radius: 16, angle: 0)
@@ -77,7 +85,7 @@ class ProcessedImageViewController: UIViewController, VNDocumentCameraViewContro
                 detectedText += topCandidate.string
                 detectedText += "\n"
             }
-            let newData = Data()
+            let newData = textData()
             newData.text = detectedText
             self.saveItems(newData)
             DispatchQueue.main.async {
@@ -88,9 +96,10 @@ class ProcessedImageViewController: UIViewController, VNDocumentCameraViewContro
         textRecognitionRequest.recognitionLevel = .accurate
     }
     
-    private func processImage(_ image: UIImage) {
-        imageView.image = image
-        recognizeTextInImage(image)
+    private func processImage(_ processedImage: UIImage) {
+        image.store(image: processedImage, forKey: image.getNewKey(textCount! - 1), withStorageType: .fileSystem) //save the image
+        imageView.image = processedImage
+        recognizeTextInImage(processedImage)
     }
     
     private func recognizeTextInImage(_ image: UIImage) {
@@ -144,7 +153,7 @@ class ProcessedImageViewController: UIViewController, VNDocumentCameraViewContro
             print(error)
         }
         //imageUrl = image.filePath(forKey: image.getKey()) //creates a unique image URL
-        image.store(image: scannedImage, forKey: image.getNewKey(textCount!), withStorageType: .fileSystem) //save the image
+        
         //print("Key is:" + image.getKey())
         
         
@@ -201,7 +210,7 @@ class ProcessedImageViewController: UIViewController, VNDocumentCameraViewContro
     
     
     //MARK: - Data Persistence Methods
-    func saveItems(_ text: Data){ //should save after image is processed
+    func saveItems(_ text: textData){ //should save after image is processed
         do{
             try realm.write{
                 realm.add(text)
