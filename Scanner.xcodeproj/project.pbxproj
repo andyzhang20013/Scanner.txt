@@ -8,7 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		504312BF248D87F4008F9330 /* Image.swift in Sources */ = {isa = PBXBuildFile; fileRef = 504312BE248D87F4008F9330 /* Image.swift */; };
-		50D4628B2498098E0047A8A4 /* imageData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50D4628A2498098E0047A8A4 /* imageData.swift */; };
 		50E84684247F5DE9004E2802 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50E84683247F5DE9004E2802 /* AppDelegate.swift */; };
 		50E84686247F5DE9004E2802 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50E84685247F5DE9004E2802 /* SceneDelegate.swift */; };
 		50E84688247F5DE9004E2802 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50E84687247F5DE9004E2802 /* ViewController.swift */; };
@@ -24,7 +23,6 @@
 /* Begin PBXFileReference section */
 		2FC7FAA99A6A39041A101E11 /* Pods-Scanner.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Scanner.release.xcconfig"; path = "Target Support Files/Pods-Scanner/Pods-Scanner.release.xcconfig"; sourceTree = "<group>"; };
 		504312BE248D87F4008F9330 /* Image.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Image.swift; sourceTree = "<group>"; };
-		50D4628A2498098E0047A8A4 /* imageData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = imageData.swift; sourceTree = "<group>"; };
 		50E84680247F5DE9004E2802 /* Scanner.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Scanner.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		50E84683247F5DE9004E2802 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		50E84685247F5DE9004E2802 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -107,7 +105,6 @@
 			isa = PBXGroup;
 			children = (
 				50F3EAA42480A05300C3DCE4 /* textData.swift */,
-				50D4628A2498098E0047A8A4 /* imageData.swift */,
 				504312BE248D87F4008F9330 /* Image.swift */,
 			);
 			path = Model;
@@ -252,7 +249,6 @@
 				50E84684247F5DE9004E2802 /* AppDelegate.swift in Sources */,
 				50F3EAA9248C676E00C3DCE4 /* SpinnerViewController.swift in Sources */,
 				50E84686247F5DE9004E2802 /* SceneDelegate.swift in Sources */,
-				50D4628B2498098E0047A8A4 /* imageData.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

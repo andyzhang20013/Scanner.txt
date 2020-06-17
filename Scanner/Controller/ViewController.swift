@@ -25,7 +25,7 @@ class ViewController: UITableViewController, VNDocumentCameraViewControllerDeleg
     func loadItems(){
         text = realm.objects(textData.self)
         text = text!.sorted(byKeyPath: "date", ascending: false)
-        //print(text) //Realm is returning the new data in a incorrect order
+        print(text)
         tableView.reloadData()
     }
     override func viewWillAppear(_ animated: Bool) { //if we press the back button, then reload the table
@@ -42,12 +42,6 @@ class ViewController: UITableViewController, VNDocumentCameraViewControllerDeleg
                 destinationVC.selectedText = text?[indexPath.row]
                 destinationVC.buttonPressed = false
                 destinationVC.cellNumber = indexPath.row
-                /*if cellNumberChanged{ //if an item has been deleted, we have to update the reference to the image
-                    if indexPath.row > cellDeletedRow!{ //if the cell is below the cell deleted, then reduce the cell number, otherwise do nothing
-                        destinationVC.cellNumber! -= 1
-                    }
-                    cellNumberChanged = false
-                }*/
             }
             else{ //if nothing scanned, then automatically launch camera
                 destinationVC.buttonPressed = true
@@ -99,7 +93,6 @@ class ViewController: UITableViewController, VNDocumentCameraViewControllerDeleg
             }
             tableView.deleteRows(at: [indexPath], with: UITableView.RowAnimation.automatic)
             loadItems()
-            print("After Deletion: \n\(text)")
         }
     }
     

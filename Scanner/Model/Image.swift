@@ -18,7 +18,6 @@ struct Image{
         didSet{ //every time imageKey is updated, this will be called
             imageName = realm.objects(textData.self)
             imageName = imageName!.sorted(byKeyPath: "date", ascending: false)
-            print(imageName)
         }
     }
     
@@ -55,7 +54,7 @@ struct Image{
     mutating func getNewKey(_ textCount: Int) -> String{ //this will create a unique key (name) for each image when we take a new scan
         let newImageData = textData()
         newImageData.imageKey = "item" + String(textCount)
-        saveImageKey(newImageData)
+        //saveImageKey(newImageData) //we will now save in the ProcessedImageViewController
         return( "item" + String(textCount))
        }
        
@@ -65,7 +64,6 @@ struct Image{
         if let existingKey = imageName?[cellNumber-1].imageKey{ //subtract 1 to get the index
             return existingKey
         }
-        print(imageName) //Nothing is being stored in imageName (returned as nil)
         return "no key found"
        }
         
@@ -111,18 +109,6 @@ struct Image{
             catch{
                 print("Error deleting imageKey: \(error)")
             }
-        }
-    }
-    
-    //MARK: - Save ImageKey
-    func saveImageKey(_ imageKey: textData){
-        do{
-            try realm.write{
-                realm.add(imageKey)
-            }
-        }
-        catch{
-            print("Error saving imageKey: \(error)")
         }
     }
 }

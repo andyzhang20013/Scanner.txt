@@ -26,7 +26,6 @@ class ProcessedImageViewController: UIViewController, VNDocumentCameraViewContro
     var textCount: Int? //for creating new cells
     private let textRecognitionWorkQueue = DispatchQueue(label: "MyVisionScannerQueue", qos: .userInitiated, attributes: [], autoreleaseFrequency: .workItem)
     var selectedText : textData? //this will be set during the segue
-    //var selectedImageKey: textData?
     var image = Image()
     private var imageUrl: URL?
     enum StorageType {
@@ -85,9 +84,10 @@ class ProcessedImageViewController: UIViewController, VNDocumentCameraViewContro
                 detectedText += topCandidate.string
                 detectedText += "\n"
             }
-            let newData = textData()
-            newData.text = detectedText
-            self.saveItems(newData)
+            let newTextData = textData()
+            newTextData.text = detectedText
+            newTextData.imageKey = self.image.getNewKey(self.textCount!)
+            self.saveItems(newTextData)
             DispatchQueue.main.async {
                 self.textView.text = detectedText
                 self.textView.flashScrollIndicators()
@@ -97,7 +97,7 @@ class ProcessedImageViewController: UIViewController, VNDocumentCameraViewContro
     }
     
     private func processImage(_ processedImage: UIImage) {
-        image.store(image: processedImage, forKey: image.getNewKey(textCount! - 1), withStorageType: .fileSystem) //save the image
+        image.store(image: processedImage, forKey: image.getNewKey(textCount!), withStorageType: .fileSystem) //save the image
         imageView.image = processedImage
         recognizeTextInImage(processedImage)
     }
@@ -152,9 +152,6 @@ class ProcessedImageViewController: UIViewController, VNDocumentCameraViewContro
         } catch {
             print(error)
         }
-        //imageUrl = image.filePath(forKey: image.getKey()) //creates a unique image URL
-        
-        //print("Key is:" + image.getKey())
         
         
         
@@ -221,9 +218,6 @@ class ProcessedImageViewController: UIViewController, VNDocumentCameraViewContro
         }
     }
     
-    /*func itemDeleted(_ cellNumber: Int) -> Int{
-        //if we delete something, need to find a way to also update the imges
-    }*/
     
     //MARK: - Share Function
     @IBAction func shareButtonPressed(_ sender: UIBarButtonItem) {
