@@ -31,7 +31,6 @@ struct Image{
                case .fileSystem:
                    if let filePath = filePath(forKey: key) {
                        do  {
-                        print("Key before storing is: " + key) //the key is correctly associated with the image, image is still accessible by key
                            try pngRepresentation.write(to: filePath,
                                                        options: .atomic)
                        } catch let error {

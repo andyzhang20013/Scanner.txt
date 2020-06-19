@@ -11,7 +11,7 @@ import RealmSwift
 
 class textData: Object{
     @objc dynamic var text: String = ""
-    @objc dynamic var date = NSDate().timeIntervalSince1970
+    @objc dynamic var date: Date?
     @objc dynamic var imageKey: String = ""
     //let imageData = List<imageData>() //forward relationship, each textData has a imageData object
 }

@@ -87,6 +87,7 @@ class ProcessedImageViewController: UIViewController, VNDocumentCameraViewContro
             let newTextData = textData()
             newTextData.text = detectedText
             newTextData.imageKey = self.image.getNewKey(self.textCount!)
+            newTextData.date = Date()
             self.saveItems(newTextData)
             DispatchQueue.main.async {
                 self.textView.text = detectedText
