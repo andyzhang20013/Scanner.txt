@@ -41,17 +41,58 @@
                             <outlet property="delegate" destination="0Lz-1t-ejP" id="iZ7-BT-p03"/>
                         </connections>
                     </tableView>
+                    <toolbarItems>
+                        <barButtonItem title="Item" image="info.circle" catalog="system" id="FQk-Ia-vZy">
+                            <connections>
+                                <segue destination="355-bF-6IA" kind="show" identifier="toHelp" id="kWb-yP-IlA"/>
+                            </connections>
+                        </barButtonItem>
+                    </toolbarItems>
                     <navigationItem key="navigationItem" title="Scanner" id="aPG-Tl-9bw">
-                        <barButtonItem key="rightBarButtonItem" systemItem="add" id="ggN-g9-zIE">
+                        <barButtonItem key="rightBarButtonItem" systemItem="camera" id="ggN-g9-zIE">
                             <connections>
                                 <segue destination="oVQ-vv-8AV" kind="show" identifier="takeNewPicture" id="BHS-hL-s9y"/>
                             </connections>
                         </barButtonItem>
                     </navigationItem>
+                    <simulatedToolbarMetrics key="simulatedBottomBarMetrics"/>
+                    <connections>
+                        <outlet property="cameraButton" destination="ggN-g9-zIE" id="tNr-Vp-U5b"/>
+                        <outlet property="searchBar" destination="Hjt-r7-tou" id="UvB-Bu-2zy"/>
+                    </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="gCh-CN-6Wp" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="2901" y="-117"/>
+        </scene>
+        <!--Help-->
+        <scene sceneID="xdt-L1-ICQ">
+            <objects>
+                <viewController id="355-bF-6IA" customClass="HelpViewController" customModule="Scanner" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="vBS-19-1i7">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="812"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Cz5-ry-Pho">
+                                <rect key="frame" x="0.0" y="140" width="375" height="672"/>
+                                <viewLayoutGuide key="contentLayoutGuide" id="moz-6u-CQm"/>
+                                <viewLayoutGuide key="frameLayoutGuide" id="CAC-CI-Xvu"/>
+                            </scrollView>
+                        </subviews>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                        <constraints>
+                            <constraint firstItem="Cz5-ry-Pho" firstAttribute="trailing" secondItem="8ra-AE-Ys3" secondAttribute="trailing" constant="2" id="Lmp-7Q-i5r"/>
+                            <constraint firstItem="Cz5-ry-Pho" firstAttribute="leading" secondItem="8ra-AE-Ys3" secondAttribute="leading" constant="2" id="V20-6j-49c"/>
+                            <constraint firstAttribute="bottom" secondItem="Cz5-ry-Pho" secondAttribute="bottom" constant="2" id="YAn-8U-KcC"/>
+                            <constraint firstItem="Cz5-ry-Pho" firstAttribute="top" secondItem="8ra-AE-Ys3" secondAttribute="top" constant="2" id="fte-HU-UwM"/>
+                        </constraints>
+                        <viewLayoutGuide key="safeArea" id="8ra-AE-Ys3"/>
+                    </view>
+                    <navigationItem key="navigationItem" title="Help" largeTitleDisplayMode="always" id="CP7-KY-rzb"/>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="9xp-Ug-gr7" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="2900" y="593.3497536945813"/>
         </scene>
         <!--Processed Image View Controller-->
         <scene sceneID="RNH-fs-nMS">
@@ -153,11 +194,15 @@
         <!--Navigation Controller-->
         <scene sceneID="K7q-G1-GkZ">
             <objects>
-                <navigationController id="jD8-21-hN0" sceneMemberID="viewController">
+                <navigationController toolbarHidden="NO" id="jD8-21-hN0" sceneMemberID="viewController">
                     <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" largeTitles="YES" id="oUT-aX-ttW">
                         <rect key="frame" x="0.0" y="44" width="375" height="96"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
+                    <toolbar key="toolbar" opaque="NO" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="YNX-42-r8u">
+                        <rect key="frame" x="0.0" y="729" width="375" height="49"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </toolbar>
                     <connections>
                         <segue destination="0Lz-1t-ejP" kind="relationship" relationship="rootViewController" id="Eej-rp-jme"/>
                     </connections>
@@ -168,9 +213,10 @@
         </scene>
     </scenes>
     <inferredMetricsTieBreakers>
-        <segue reference="DMq-KR-LaO"/>
+        <segue reference="BHS-hL-s9y"/>
     </inferredMetricsTieBreakers>
     <resources>
+        <image name="info.circle" catalog="system" width="128" height="121"/>
         <image name="square.and.arrow.up" catalog="system" width="115" height="128"/>
     </resources>
 </document>

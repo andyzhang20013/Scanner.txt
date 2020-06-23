@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		504312BF248D87F4008F9330 /* Image.swift in Sources */ = {isa = PBXBuildFile; fileRef = 504312BE248D87F4008F9330 /* Image.swift */; };
+		50D422A024A13DD6000364D5 /* HelpViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50D4229F24A13DD6000364D5 /* HelpViewController.swift */; };
 		50E84684247F5DE9004E2802 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50E84683247F5DE9004E2802 /* AppDelegate.swift */; };
 		50E84686247F5DE9004E2802 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50E84685247F5DE9004E2802 /* SceneDelegate.swift */; };
 		50E84688247F5DE9004E2802 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50E84687247F5DE9004E2802 /* ViewController.swift */; };
@@ -23,6 +24,7 @@
 /* Begin PBXFileReference section */
 		2FC7FAA99A6A39041A101E11 /* Pods-Scanner.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Scanner.release.xcconfig"; path = "Target Support Files/Pods-Scanner/Pods-Scanner.release.xcconfig"; sourceTree = "<group>"; };
 		504312BE248D87F4008F9330 /* Image.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Image.swift; sourceTree = "<group>"; };
+		50D4229F24A13DD6000364D5 /* HelpViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HelpViewController.swift; sourceTree = "<group>"; };
 		50E84680247F5DE9004E2802 /* Scanner.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Scanner.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		50E84683247F5DE9004E2802 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		50E84685247F5DE9004E2802 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -77,7 +79,6 @@
 				50F3EA9E24806E8700C3DCE4 /* View */,
 				50F3EA9D24806E4600C3DCE4 /* Controller */,
 				50E8468C247F5DEE004E2802 /* Assets.xcassets */,
-				50E8468E247F5DEE004E2802 /* LaunchScreen.storyboard */,
 				50E84691247F5DEE004E2802 /* Info.plist */,
 			);
 			path = Scanner;
@@ -88,6 +89,7 @@
 			children = (
 				50E84687247F5DE9004E2802 /* ViewController.swift */,
 				50F3EAA22480776800C3DCE4 /* ProcessedImageViewController.swift */,
+				50D4229F24A13DD6000364D5 /* HelpViewController.swift */,
 				50F3EAA8248C676C00C3DCE4 /* SpinnerViewController.swift */,
 			);
 			path = Controller;
@@ -96,6 +98,7 @@
 		50F3EA9E24806E8700C3DCE4 /* View */ = {
 			isa = PBXGroup;
 			children = (
+				50E8468E247F5DEE004E2802 /* LaunchScreen.storyboard */,
 				50E84689247F5DE9004E2802 /* Main.storyboard */,
 			);
 			path = View;
@@ -245,6 +248,7 @@
 				504312BF248D87F4008F9330 /* Image.swift in Sources */,
 				50E84688247F5DE9004E2802 /* ViewController.swift in Sources */,
 				50F3EAA52480A05300C3DCE4 /* textData.swift in Sources */,
+				50D422A024A13DD6000364D5 /* HelpViewController.swift in Sources */,
 				50F3EAA32480776800C3DCE4 /* ProcessedImageViewController.swift in Sources */,
 				50E84684247F5DE9004E2802 /* AppDelegate.swift in Sources */,
 				50F3EAA9248C676E00C3DCE4 /* SpinnerViewController.swift in Sources */,
@@ -396,7 +400,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 3R8PUY8V8F;
 				INFOPLIST_FILE = Scanner/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 13.4;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -416,7 +420,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 3R8PUY8V8F;
 				INFOPLIST_FILE = Scanner/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 13.4;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",

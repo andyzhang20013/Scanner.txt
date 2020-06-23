@@ -38,6 +38,7 @@ class ProcessedImageViewController: UIViewController, VNDocumentCameraViewContro
         textView.isScrollEnabled = true
         textView.isUserInteractionEnabled = true
         navigationItem.largeTitleDisplayMode = .never
+        navigationController?.setToolbarHidden(true, animated: false)
         if buttonPressed{
             pictureButtonPressed()
             setupVision()
@@ -89,6 +90,14 @@ class ProcessedImageViewController: UIViewController, VNDocumentCameraViewContro
             newTextData.imageKey = self.image.getNewKey(self.textCount!)
             newTextData.date = Date()
             self.saveItems(newTextData)
+            if newTextData.text == ""{ //if no text detected, alert the user
+                let alert = UIAlertController(title: "No text found", message: "No text was scanned. Please try again", preferredStyle: .alert)
+                let okAction = UIAlertAction(title: "OK", style: .default, handler: {action -> Void in
+                    //delete the image and imageKey?
+                })
+                alert.addAction(okAction)
+                self.present(alert, animated: true, completion: nil)
+            }
             DispatchQueue.main.async {
                 self.textView.text = detectedText
                 self.textView.flashScrollIndicators()
@@ -222,10 +231,9 @@ class ProcessedImageViewController: UIViewController, VNDocumentCameraViewContro
     
     //MARK: - Share Function
     @IBAction func shareButtonPressed(_ sender: UIBarButtonItem) {
-        //let imageToShare = [UIImage(named: getKey(cellNumber))]
-        //find a way to share images
-        let items = [selectedText?.text]
+        let items = [textView.text]
          let ac = UIActivityViewController(activityItems: items, applicationActivities: nil)
+        //ac.excludedActivityTypes = ["com.tencent.xin.sharetimeline"] //can't exclude Wechat
         present(ac, animated: true)
         
     }
