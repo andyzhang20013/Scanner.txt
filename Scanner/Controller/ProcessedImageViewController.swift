@@ -11,10 +11,12 @@ import Vision
 import VisionKit
 import RealmSwift
 import SpinningIndicator
-class ProcessedImageViewController: UIViewController, VNDocumentCameraViewControllerDelegate{
+import AVFoundation
+class ProcessedImageViewController: UIViewController, VNDocumentCameraViewControllerDelegate, AVSpeechSynthesizerDelegate{
     @IBOutlet weak var imageView: UIImageView!
     @IBOutlet weak var textView: UITextView!
     
+    @IBOutlet weak var speakerBarButton: UIBarButtonItem!
     let realm = try! Realm()
     //let spin = SpinnerViewController()
     let alert = UIAlertController(title: nil, message: "Scanning for Text", preferredStyle: .alert)
@@ -27,18 +29,24 @@ class ProcessedImageViewController: UIViewController, VNDocumentCameraViewContro
     private let textRecognitionWorkQueue = DispatchQueue(label: "MyVisionScannerQueue", qos: .userInitiated, attributes: [], autoreleaseFrequency: .workItem)
     var selectedText : textData? //this will be set during the segue
     var image = Image()
+    let synthesizer = AVSpeechSynthesizer()
     private var imageUrl: URL?
     enum StorageType {
         case fileSystem
     }
     
+    override func viewWillDisappear(_ animated: Bool) {
+        synthesizer.stopSpeaking(at: .immediate)
+    }
     override func viewDidLoad() {
         super.viewDidLoad()
         textView.isEditable = false
         textView.isScrollEnabled = true
         textView.isUserInteractionEnabled = true
         navigationItem.largeTitleDisplayMode = .never
-        navigationController?.setToolbarHidden(true, animated: false)
+        speakerBarButton.image = UIImage(named: "speaker")
+        synthesizer.delegate = self
+        //navigationController?.setToolbarHidden(true, animated: false)
         if buttonPressed{
             pictureButtonPressed()
             setupVision()
@@ -80,23 +88,34 @@ class ProcessedImageViewController: UIViewController, VNDocumentCameraViewContro
             var detectedText = ""
             for observation in observations {
                 guard let topCandidate = observation.topCandidates(1).first else { return }
-                print("text \(topCandidate.string) has confidence \(topCandidate.confidence)")
+                //print("text \(topCandidate.string) has confidence \(topCandidate.confidence)")
                 
                 detectedText += topCandidate.string
-                detectedText += "\n"
+                detectedText += " "
             }
-            let newTextData = textData()
-            newTextData.text = detectedText
-            newTextData.imageKey = self.image.getNewKey(self.textCount!)
-            newTextData.date = Date()
-            self.saveItems(newTextData)
-            if newTextData.text == ""{ //if no text detected, alert the user
+            
+            
+            if detectedText == ""{ //if no text detected, alert the user
                 let alert = UIAlertController(title: "No text found", message: "No text was scanned. Please try again", preferredStyle: .alert)
-                let okAction = UIAlertAction(title: "OK", style: .default, handler: {action -> Void in
+                let okAction = UIAlertAction(title: "OK", style: .default) {(action) in
                     //delete the image and imageKey?
-                })
+                    //self.performSegue(withIdentifier: "okButtonPressed", sender: Any?)
+                    
+                    //performSegue(withIdentifier: "okButtonPressed", sender: Any?)
+                    self.performSegue(withIdentifier: "unwindToCells", sender: action)
+                    
+                }
+                
                 alert.addAction(okAction)
                 self.present(alert, animated: true, completion: nil)
+            }
+            
+            else if detectedText != ""{
+                let newTextData = textData()
+                newTextData.text = detectedText
+                newTextData.imageKey = self.image.getNewKey(self.textCount!)
+                newTextData.date = Date()
+                self.saveItems(newTextData)
             }
             DispatchQueue.main.async {
                 self.textView.text = detectedText
@@ -238,5 +257,25 @@ class ProcessedImageViewController: UIViewController, VNDocumentCameraViewContro
         
     }
     
+    //MARK: - Text to Speech
     
+    @IBAction func speakerButtonPressed(_ sender: UIBarButtonItem){
+        print(synthesizer.isSpeaking)
+        let utterance = AVSpeechUtterance(string: textView.text)
+        utterance.voice = AVSpeechSynthesisVoice(language: "en-US")
+        utterance.rate = 0.5
+        if sender.image == UIImage(named: "speaker"){
+            synthesizer.speak(utterance)
+            sender.image = UIImage(named: "speakerSlash")
+        }
+        else if sender.image == UIImage(named: "speakerSlash"){
+            synthesizer.stopSpeaking(at: .immediate)
+            sender.image = UIImage(named: "speaker")
+        }
+        
+    }
+     func speechSynthesizer(_ synthesizer: AVSpeechSynthesizer,
+                           didFinish utterance: AVSpeechUtterance){
+        speakerBarButton.image = UIImage(named: "speaker")
+    }
 }

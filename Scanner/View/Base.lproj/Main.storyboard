@@ -172,6 +172,13 @@
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="v0u-9m-0Lv"/>
                     </view>
+                    <toolbarItems>
+                        <barButtonItem title="Speaker" id="ls1-Bf-s6L">
+                            <connections>
+                                <action selector="speakerButtonPressed:" destination="oVQ-vv-8AV" id="oWZ-Nq-b9H"/>
+                            </connections>
+                        </barButtonItem>
+                    </toolbarItems>
                     <navigationItem key="navigationItem" id="sus-Zo-YkM">
                         <barButtonItem key="rightBarButtonItem" title="Share" image="square.and.arrow.up" catalog="system" id="FCH-CQ-oTl">
                             <connections>
@@ -179,8 +186,10 @@
                             </connections>
                         </barButtonItem>
                     </navigationItem>
+                    <simulatedToolbarMetrics key="simulatedBottomBarMetrics"/>
                     <connections>
                         <outlet property="imageView" destination="QZ7-6K-HGF" id="jIh-yP-t2G"/>
+                        <outlet property="speakerBarButton" destination="ls1-Bf-s6L" id="utz-FI-290"/>
                         <outlet property="textView" destination="vlo-x7-cwy" id="Hek-EL-YEA"/>
                         <segue destination="Wjf-hK-xPJ" kind="unwind" identifier="unwindToCells" unwindAction="unwind:" id="kPq-Ib-xoq"/>
                         <segue destination="Wjf-hK-xPJ" kind="unwind" identifier="backButtonPressed" unwindAction="unwind:" id="HxM-cH-niQ"/>
@@ -189,7 +198,7 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="cIy-F7-dMD" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
                 <exit id="Wjf-hK-xPJ" userLabel="Exit" sceneMemberID="exit"/>
             </objects>
-            <point key="canvasLocation" x="3807.1999999999998" y="-104.92610837438424"/>
+            <point key="canvasLocation" x="3801" y="-117"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="K7q-G1-GkZ">
@@ -213,7 +222,7 @@
         </scene>
     </scenes>
     <inferredMetricsTieBreakers>
-        <segue reference="BHS-hL-s9y"/>
+        <segue reference="DMq-KR-LaO"/>
     </inferredMetricsTieBreakers>
     <resources>
         <image name="info.circle" catalog="system" width="128" height="121"/>
