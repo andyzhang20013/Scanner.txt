@@ -23,7 +23,6 @@ class ProcessedImageViewController: UIViewController, VNDocumentCameraViewContro
     let indicator = SpinningIndicator(frame: UIScreen.main.bounds)
     var buttonPressed: Bool = false
     var textRecognitionRequest = VNRecognizeTextRequest(completionHandler: nil)
-    
     var cellNumber: Int? //for referring to existing cells
     var textCount: Int? //for creating new cells
     private let textRecognitionWorkQueue = DispatchQueue(label: "MyVisionScannerQueue", qos: .userInitiated, attributes: [], autoreleaseFrequency: .workItem)
@@ -37,7 +36,10 @@ class ProcessedImageViewController: UIViewController, VNDocumentCameraViewContro
     
     override func viewWillDisappear(_ animated: Bool) {
         synthesizer.stopSpeaking(at: .immediate)
+        UIApplication.shared.isIdleTimerDisabled = false
     }
+    
+
     override func viewDidLoad() {
         super.viewDidLoad()
         textView.isEditable = false
@@ -46,11 +48,9 @@ class ProcessedImageViewController: UIViewController, VNDocumentCameraViewContro
         navigationItem.largeTitleDisplayMode = .never
         speakerBarButton.image = UIImage(named: "speaker")
         synthesizer.delegate = self
-        //navigationController?.setToolbarHidden(true, animated: false)
         if buttonPressed{
             pictureButtonPressed()
             setupVision()
-            
         }
         else if (textView.text != nil){ //if there is text, we just display it (no other methods are called)
             textView.text = selectedText?.text
@@ -98,10 +98,6 @@ class ProcessedImageViewController: UIViewController, VNDocumentCameraViewContro
             if detectedText == ""{ //if no text detected, alert the user
                 let alert = UIAlertController(title: "No text found", message: "No text was scanned. Please try again", preferredStyle: .alert)
                 let okAction = UIAlertAction(title: "OK", style: .default) {(action) in
-                    //delete the image and imageKey?
-                    //self.performSegue(withIdentifier: "okButtonPressed", sender: Any?)
-                    
-                    //performSegue(withIdentifier: "okButtonPressed", sender: Any?)
                     self.performSegue(withIdentifier: "unwindToCells", sender: action)
                     
                 }
@@ -266,10 +262,12 @@ class ProcessedImageViewController: UIViewController, VNDocumentCameraViewContro
         utterance.rate = 0.5
         if sender.image == UIImage(named: "speaker"){
             synthesizer.speak(utterance)
+            UIApplication.shared.isIdleTimerDisabled = true //when speaking, won't fall asleep
             sender.image = UIImage(named: "speakerSlash")
         }
         else if sender.image == UIImage(named: "speakerSlash"){
             synthesizer.stopSpeaking(at: .immediate)
+            UIApplication.shared.isIdleTimerDisabled = false
             sender.image = UIImage(named: "speaker")
         }
         
@@ -277,5 +275,6 @@ class ProcessedImageViewController: UIViewController, VNDocumentCameraViewContro
      func speechSynthesizer(_ synthesizer: AVSpeechSynthesizer,
                            didFinish utterance: AVSpeechUtterance){
         speakerBarButton.image = UIImage(named: "speaker")
+        UIApplication.shared.isIdleTimerDisabled = false
     }
 }

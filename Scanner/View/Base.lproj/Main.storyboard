@@ -97,7 +97,7 @@
         <!--Processed Image View Controller-->
         <scene sceneID="RNH-fs-nMS">
             <objects>
-                <viewController id="oVQ-vv-8AV" customClass="ProcessedImageViewController" customModule="Scanner" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="ProcessedImageViewController" id="oVQ-vv-8AV" customClass="ProcessedImageViewController" customModule="Scanner" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="i2i-K0-fmC">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="812"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
