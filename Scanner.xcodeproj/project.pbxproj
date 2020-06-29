@@ -25,7 +25,7 @@
 		2FC7FAA99A6A39041A101E11 /* Pods-Scanner.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Scanner.release.xcconfig"; path = "Target Support Files/Pods-Scanner/Pods-Scanner.release.xcconfig"; sourceTree = "<group>"; };
 		504312BE248D87F4008F9330 /* Image.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Image.swift; sourceTree = "<group>"; };
 		50D4229F24A13DD6000364D5 /* HelpViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HelpViewController.swift; sourceTree = "<group>"; };
-		50E84680247F5DE9004E2802 /* Scanner.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Scanner.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		50E84680247F5DE9004E2802 /* Scanner.txt.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Scanner.txt.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		50E84683247F5DE9004E2802 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		50E84685247F5DE9004E2802 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
 		50E84687247F5DE9004E2802 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -65,7 +65,7 @@
 		50E84681247F5DE9004E2802 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				50E84680247F5DE9004E2802 /* Scanner.app */,
+				50E84680247F5DE9004E2802 /* Scanner.txt.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -149,7 +149,7 @@
 			);
 			name = Scanner;
 			productName = Scanner;
-			productReference = 50E84680247F5DE9004E2802 /* Scanner.app */;
+			productReference = 50E84680247F5DE9004E2802 /* Scanner.txt.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -406,7 +406,7 @@
 					"@executable_path/Frameworks",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.andrewzhang.Scanner;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = Scanner.txt;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -426,7 +426,7 @@
 					"@executable_path/Frameworks",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.andrewzhang.Scanner;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = Scanner.txt;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};

@@ -46,7 +46,7 @@ class ProcessedImageViewController: UIViewController, VNDocumentCameraViewContro
         textView.isScrollEnabled = true
         textView.isUserInteractionEnabled = true
         navigationItem.largeTitleDisplayMode = .never
-        speakerBarButton.image = UIImage(named: "speaker")
+        speakerBarButton.image = UIImage(named: "speaker.2")
         synthesizer.delegate = self
         if buttonPressed{
             pictureButtonPressed()
@@ -250,6 +250,11 @@ class ProcessedImageViewController: UIViewController, VNDocumentCameraViewContro
          let ac = UIActivityViewController(activityItems: items, applicationActivities: nil)
         //ac.excludedActivityTypes = ["com.tencent.xin.sharetimeline"] //can't exclude Wechat
         present(ac, animated: true)
+        if let popOver = ac.popoverPresentationController {
+          popOver.sourceView = self.view
+          popOver.sourceRect = CGRect(x: self.view.bounds.midX, y: self.view.bounds.midY, width: 0, height: 0)
+            popOver.barButtonItem = sender
+        }
         
     }
     
@@ -260,7 +265,7 @@ class ProcessedImageViewController: UIViewController, VNDocumentCameraViewContro
         let utterance = AVSpeechUtterance(string: textView.text)
         utterance.voice = AVSpeechSynthesisVoice(language: "en-US")
         utterance.rate = 0.5
-        if sender.image == UIImage(named: "speaker"){
+        if sender.image == UIImage(named: "speaker.2"){
             synthesizer.speak(utterance)
             UIApplication.shared.isIdleTimerDisabled = true //when speaking, won't fall asleep
             sender.image = UIImage(named: "speakerSlash")
@@ -268,13 +273,14 @@ class ProcessedImageViewController: UIViewController, VNDocumentCameraViewContro
         else if sender.image == UIImage(named: "speakerSlash"){
             synthesizer.stopSpeaking(at: .immediate)
             UIApplication.shared.isIdleTimerDisabled = false
-            sender.image = UIImage(named: "speaker")
+            sender.image = UIImage(named: "speaker.2")
+            print("button pressed")
         }
         
     }
      func speechSynthesizer(_ synthesizer: AVSpeechSynthesizer,
                            didFinish utterance: AVSpeechUtterance){
-        speakerBarButton.image = UIImage(named: "speaker")
+        speakerBarButton.image = UIImage(named: "speaker.2")
         UIApplication.shared.isIdleTimerDisabled = false
     }
 }

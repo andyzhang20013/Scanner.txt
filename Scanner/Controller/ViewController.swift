@@ -14,6 +14,7 @@ import SwipeCellKit
 class ViewController: UITableViewController, VNDocumentCameraViewControllerDelegate {
     let realm = try! Realm()
     let image = Image()
+    let label = UILabel()
     var text: Results<textData>?
     //private let searchController = UISearchController(searchResultsController: nil)
 
@@ -26,16 +27,23 @@ class ViewController: UITableViewController, VNDocumentCameraViewControllerDeleg
         tableView.keyboardDismissMode = .onDrag
         loadItems()
         navigationItem.title = "My Scans"
-        
-        // searchController.searchBar.isHidden = true
+        navigationItem.largeTitleDisplayMode = .always
         //self.navigationItem.searchController = searchController
         //self.navigationItem.hidesSearchBarWhenScrolling = false
-        
     }
     func loadItems(){
         text = realm.objects(textData.self)
         text = text!.sorted(byKeyPath: "date", ascending: false)
-        print(text)
+        if text?.count == 0{
+            label.isHidden = false
+            label.text = "Press the camera icon to scan a document"
+            label.textAlignment = .center
+             searchBar.isHidden = true
+        }
+        else{
+            label.isHidden = true
+           
+        }
         tableView.reloadData()
     }
     override func viewWillAppear(_ animated: Bool) { //if we press the back button, then reload the table
@@ -92,24 +100,16 @@ class ViewController: UITableViewController, VNDocumentCameraViewControllerDeleg
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
 
         if let textCount = text?.count{
-           
-        let label = UILabel()
             tableView.backgroundView = label
             tableView.separatorStyle = .singleLine
             if textCount != 0{
-                //label.text = "Press \(#imageLiteral(resourceName: "camera.png")) to scan a document"
-                label.text = "Press the Camera icon to scan a document"
-                label.textAlignment = .center
-                label.textColor = .white //hides the label when there's a cell
                 searchBar.isHidden = false
                 tableView.isScrollEnabled = true
                 return textCount
             }
         else{
-            label.text = "Press + to scan a document"
-            label.textAlignment = .center
-            searchBar.isHidden = true
-            tableView.isScrollEnabled = false
+                tableView.isScrollEnabled = false
+               
             return 0
         }
             
@@ -140,6 +140,7 @@ extension ViewController: SwipeTableViewCellDelegate{
                 catch{
                     print("Error deleting image and/or text: \(error)")
                 }
+                self.loadItems()
                  tableView.reloadData()
                 
             }
@@ -163,9 +164,20 @@ extension ViewController: SwipeTableViewCellDelegate{
     //MARK: - Search Bar Methods
     extension ViewController: UISearchBarDelegate{
         func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
-            text = text?.filter("text CONTAINS[cd] %@", searchBar.text!).sorted(byKeyPath: "date", ascending: false)
-            tableView.reloadData() //calls datasource table view methods
+              text = text?.filter("text CONTAINS[cd] %@", searchBar.text!).sorted(byKeyPath: "date", ascending: false)
+            if let textCountInSearchBar = text?.count{
+                if textCountInSearchBar == 0{
+                    label.isHidden = false
+                    label.text = "No results found"
+                     label.textAlignment = .center
+                    
+                    searchBar.isHidden = false
+                }
+            }
+                tableView.reloadData() //calls datasource table view methods
+                
             
+             
         }
         func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String){
             if searchBar.text?.count == 0 { //when we want to clear the serach bar

@@ -19,9 +19,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         print(Realm.Configuration.defaultConfiguration.fileURL) //location of Realm Database
         
-        if let shortcutItem = launchOptions?[UIApplication.LaunchOptionsKey.shortcutItem] as? UIApplicationShortcutItem{
+        /*if let shortcutItem = launchOptions?[UIApplication.LaunchOptionsKey.shortcutItem] as? UIApplicationShortcutItem{
             launchedShortcutItem = shortcutItem
-        }
+        }*/
         
         
         do{
@@ -34,17 +34,17 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         return true
     }
     
-    func application(_ application: UIApplication, performActionFor shortcutItem: UIApplicationShortcutItem, completionHandler: @escaping (Bool) -> Void) {
+  /*  func application(_ application: UIApplication, performActionFor shortcutItem: UIApplicationShortcutItem, completionHandler: @escaping (Bool) -> Void) {
         completionHandler(handleShortcutItem(item: shortcutItem))
-    }
+    }*/
 
     func applicationDidBecomeActive(_ application: UIApplication) {
         
-        guard let shortcutItem = launchedShortcutItem else { return }
+       // guard let shortcutItem = launchedShortcutItem else { return }
         //If there is any shortcutItem,that will be handled upon the app becomes active
-        _ = handleShortcutItem(item: shortcutItem)
+       // _ = handleShortcutItem(item: shortcutItem)
         //We make it nil after perfom/handle method call for that shortcutItem action
-        launchedShortcutItem = nil
+       // launchedShortcutItem = nil
         /*
         if let shortcutItem = launchedShortcutItem {
             // In this sample an alert is being shown to indicate that the action has been triggered,
@@ -76,7 +76,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         return handled
     }*/
-    func handleShortcutItem(item: UIApplicationShortcutItem) -> Bool {
+    /*func handleShortcutItem(item: UIApplicationShortcutItem) -> Bool {
         var handled = false
         // Verify that the provided shortcutItem's type is one handled by the application.
         let mainStoryboard = UIStoryboard.init(name: "Main", bundle: Bundle.main)
@@ -90,7 +90,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         }
         
         return handled
-    }
+    }*/
     // MARK: UISceneSession Lifecycle
 
     func application(_ application: UIApplication, configurationForConnecting connectingSceneSession: UISceneSession, options: UIScene.ConnectionOptions) -> UISceneConfiguration {
