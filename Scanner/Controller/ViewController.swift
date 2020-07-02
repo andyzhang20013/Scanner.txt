@@ -22,12 +22,19 @@ class ViewController: UITableViewController, VNDocumentCameraViewControllerDeleg
     @IBOutlet weak var cameraButton: UIBarButtonItem!
     override func viewDidLoad() {
         super.viewDidLoad()
-        tableView.rowHeight = 80
+        tableView.rowHeight = 100
         tableView.tableFooterView = UIView()
         tableView.keyboardDismissMode = .onDrag
         loadItems()
         navigationItem.title = "My Scans"
         navigationItem.largeTitleDisplayMode = .always
+        //tableView.contentInsetAdjustmentBehavior = .automatic
+        /*var frame = CGRect.zero
+        frame.size.height = .leastNormalMagnitude
+        tableView.tableHeaderView = UIView(frame: frame)*/
+        
+        //navigationController?.setToolbarHidden(true, animated: false)
+        
         //self.navigationItem.searchController = searchController
         //self.navigationItem.hidesSearchBarWhenScrolling = false
     }
@@ -38,7 +45,7 @@ class ViewController: UITableViewController, VNDocumentCameraViewControllerDeleg
             label.isHidden = false
             label.text = "Press the camera icon to scan a document"
             label.textAlignment = .center
-             searchBar.isHidden = true
+            searchBar.isHidden = true
         }
         else{
             label.isHidden = true
@@ -47,8 +54,9 @@ class ViewController: UITableViewController, VNDocumentCameraViewControllerDeleg
         tableView.reloadData()
     }
     override func viewWillAppear(_ animated: Bool) { //if we press the back button, then reload the table
-        navigationController?.isToolbarHidden = false
+        navigationController?.isToolbarHidden = true
         loadItems()
+        UIApplication.shared.isIdleTimerDisabled = false
     }
     
      override func prepare(for segue: UIStoryboardSegue, sender: Any?) { //always go through here
@@ -75,6 +83,7 @@ class ViewController: UITableViewController, VNDocumentCameraViewControllerDeleg
         else if (segue.identifier == "toHelp"){
             
         }
+        searchBar.text = "" //if we go back, then the search bar will clear
         
     }
     @IBAction func unwind( _ seg: UIStoryboardSegue) { //this function gets called when we press the "cancel" in camera view controller or when we press the back button in the navigation bar
@@ -94,6 +103,7 @@ class ViewController: UITableViewController, VNDocumentCameraViewControllerDeleg
             cell.textLabel?.text = "No text scanned yet"
         }
         cell.delegate = self
+        cell.textLabel?.numberOfLines = 0
         return cell
     }
     
@@ -174,7 +184,11 @@ extension ViewController: SwipeTableViewCellDelegate{
                     searchBar.isHidden = false
                 }
             }
+            
+            if searchBar.text != ""{
                 tableView.reloadData() //calls datasource table view methods
+            }
+                
                 
             
              

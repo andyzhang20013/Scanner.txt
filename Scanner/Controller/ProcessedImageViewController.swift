@@ -36,7 +36,7 @@ class ProcessedImageViewController: UIViewController, VNDocumentCameraViewContro
     
     override func viewWillDisappear(_ animated: Bool) {
         synthesizer.stopSpeaking(at: .immediate)
-        UIApplication.shared.isIdleTimerDisabled = false
+        
     }
     
 
@@ -46,6 +46,7 @@ class ProcessedImageViewController: UIViewController, VNDocumentCameraViewContro
         textView.isScrollEnabled = true
         textView.isUserInteractionEnabled = true
         navigationItem.largeTitleDisplayMode = .never
+        navigationController?.isToolbarHidden = false
         speakerBarButton.image = UIImage(named: "speaker.2")
         synthesizer.delegate = self
         if buttonPressed{

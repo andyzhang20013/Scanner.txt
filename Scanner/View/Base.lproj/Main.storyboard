@@ -10,7 +10,7 @@
         <!--Scanner-->
         <scene sceneID="e9M-yH-DbC">
             <objects>
-                <tableViewController id="0Lz-1t-ejP" customClass="ViewController" customModule="Scanner" customModuleProvider="target" sceneMemberID="viewController">
+                <tableViewController id="0Lz-1t-ejP" customClass="ViewController" customModule="Scanner_txt" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" id="w7V-s6-lSm">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="812"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -68,7 +68,7 @@
         <!--Help-->
         <scene sceneID="xdt-L1-ICQ">
             <objects>
-                <viewController id="355-bF-6IA" customClass="HelpViewController" customModule="Scanner" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="355-bF-6IA" customClass="HelpViewController" customModule="Scanner_txt" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="vBS-19-1i7">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="812"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -97,7 +97,7 @@
         <!--Processed Image View Controller-->
         <scene sceneID="RNH-fs-nMS">
             <objects>
-                <viewController storyboardIdentifier="ProcessedImageViewController" id="oVQ-vv-8AV" customClass="ProcessedImageViewController" customModule="Scanner" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="ProcessedImageViewController" id="oVQ-vv-8AV" customClass="ProcessedImageViewController" customModule="Scanner_txt" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="i2i-K0-fmC">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="812"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
