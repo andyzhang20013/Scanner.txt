@@ -11,15 +11,16 @@ import VisionKit
 import Vision
 import RealmSwift
 import SwipeCellKit
-class ViewController: UITableViewController, VNDocumentCameraViewControllerDelegate {
+class ViewController: UITableViewController, VNDocumentCameraViewControllerDelegate, UISearchResultsUpdating, UISearchBarDelegate {
+    @IBOutlet weak var cameraButton: UIBarButtonItem!
     let realm = try! Realm()
     let image = Image()
     let label = UILabel()
     var text: Results<textData>?
-    //private let searchController = UISearchController(searchResultsController: nil)
-
-    @IBOutlet weak var searchBar: UISearchBar!
-    @IBOutlet weak var cameraButton: UIBarButtonItem!
+    private let search = UISearchController(searchResultsController: nil)
+     var isSearchBarEmpty: Bool {
+       return search.searchBar.text?.isEmpty ?? true
+     }
     override func viewDidLoad() {
         super.viewDidLoad()
         tableView.rowHeight = 100
@@ -28,15 +29,12 @@ class ViewController: UITableViewController, VNDocumentCameraViewControllerDeleg
         loadItems()
         navigationItem.title = "My Scans"
         navigationItem.largeTitleDisplayMode = .always
-        //tableView.contentInsetAdjustmentBehavior = .automatic
-        /*var frame = CGRect.zero
-        frame.size.height = .leastNormalMagnitude
-        tableView.tableHeaderView = UIView(frame: frame)*/
-        
-        //navigationController?.setToolbarHidden(true, animated: false)
-        
-        //self.navigationItem.searchController = searchController
-        //self.navigationItem.hidesSearchBarWhenScrolling = false
+        search.searchResultsUpdater = self
+        search.obscuresBackgroundDuringPresentation = false
+        search.searchBar.placeholder = "Search"
+        navigationItem.searchController = search
+        search.searchBar.delegate = self
+        self.navigationItem.hidesSearchBarWhenScrolling = false
     }
     func loadItems(){
         text = realm.objects(textData.self)
@@ -45,11 +43,11 @@ class ViewController: UITableViewController, VNDocumentCameraViewControllerDeleg
             label.isHidden = false
             label.text = "Press the camera icon to scan a document"
             label.textAlignment = .center
-            searchBar.isHidden = true
+            search.searchBar.isHidden = true
         }
         else{
             label.isHidden = true
-           
+            search.searchBar.isHidden = false
         }
         tableView.reloadData()
     }
@@ -81,9 +79,9 @@ class ViewController: UITableViewController, VNDocumentCameraViewControllerDeleg
         }
         
         else if (segue.identifier == "toHelp"){
-            
+            //implement a help page?
         }
-        searchBar.text = "" //if we go back, then the search bar will clear
+        search.searchBar.text = "" //if we go back, then the search bar will clear
         
     }
     @IBAction func unwind( _ seg: UIStoryboardSegue) { //this function gets called when we press the "cancel" in camera view controller or when we press the back button in the navigation bar
@@ -99,7 +97,6 @@ class ViewController: UITableViewController, VNDocumentCameraViewControllerDeleg
         }
         
         if (text?[0].imageKey == ""){
-            
             cell.textLabel?.text = "No text scanned yet"
         }
         cell.delegate = self
@@ -113,17 +110,14 @@ class ViewController: UITableViewController, VNDocumentCameraViewControllerDeleg
             tableView.backgroundView = label
             tableView.separatorStyle = .singleLine
             if textCount != 0{
-                searchBar.isHidden = false
                 tableView.isScrollEnabled = true
                 return textCount
             }
         else{
-                tableView.isScrollEnabled = false
-               
+            tableView.isScrollEnabled = false
             return 0
         }
-            
-        }
+    }
         return 1
     }
     
@@ -170,42 +164,39 @@ extension ViewController: SwipeTableViewCellDelegate{
         options.transitionStyle = .border
         return options
     }
-}
-    //MARK: - Search Bar Methods
-    extension ViewController: UISearchBarDelegate{
-        func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
-              text = text?.filter("text CONTAINS[cd] %@", searchBar.text!).sorted(byKeyPath: "date", ascending: false)
-            if let textCountInSearchBar = text?.count{
-                if textCountInSearchBar == 0{
-                    label.isHidden = false
-                    label.text = "No results found"
-                     label.textAlignment = .center
-                    
-                    searchBar.isHidden = false
-                }
-            }
-            
-            if searchBar.text != ""{
-                tableView.reloadData() //calls datasource table view methods
-            }
-                
-                
-            
-             
-        }
-        func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String){
-            if searchBar.text?.count == 0 { //when we want to clear the serach bar
-                loadItems() //reload all items to quit out of search
-                DispatchQueue.main.async{ //run on mainQeue so that when we dismiss, the keyboard can go away on a background thread so that it can go away even if other items are still be loaded
-                    searchBar.resignFirstResponder()//this makes the keyboard go away
-                }
-            }
-        }
-        
-       
-        
-    }
 
     
 
+    //MARK: - UISearchController
+func updateSearchResults(for searchController: UISearchController) {
+      if !isSearchBarEmpty{
+      guard let textInSearchBar = searchController.searchBar.text else { return }
+      text = text?.filter("text CONTAINS[cd] %@", textInSearchBar).sorted(byKeyPath: "date", ascending: false)
+          if text?.count == 0{
+            label.isHidden = false
+            label.text = "No results found"
+            label.textAlignment = .center
+          }
+      
+          tableView.reloadData() //calls datasource table view methods
+      }
+      else{
+          //searchController.searchBar.resignFirstResponder()
+          searchBarCancelButtonClicked(search.searchBar)
+      }
+      
+  }
+  
+  func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+      searchBar.resignFirstResponder()
+  }
 
+  func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
+      loadItems()
+  }
+  func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+      text = realm.objects(textData.self)
+      text = text!.sorted(byKeyPath: "date", ascending: false)
+      updateSearchResults(for: search)
+  }
+}

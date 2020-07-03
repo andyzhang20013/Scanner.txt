@@ -10,17 +10,15 @@ import UIKit
 import Vision
 import VisionKit
 import RealmSwift
-import SpinningIndicator
 import AVFoundation
 class ProcessedImageViewController: UIViewController, VNDocumentCameraViewControllerDelegate, AVSpeechSynthesizerDelegate{
     @IBOutlet weak var imageView: UIImageView!
     @IBOutlet weak var textView: UITextView!
-    
     @IBOutlet weak var speakerBarButton: UIBarButtonItem!
     let realm = try! Realm()
     //let spin = SpinnerViewController()
     let alert = UIAlertController(title: nil, message: "Scanning for Text", preferredStyle: .alert)
-    let indicator = SpinningIndicator(frame: UIScreen.main.bounds)
+    //let indicator = SpinningIndicator(frame: UIScreen.main.bounds)
     var buttonPressed: Bool = false
     var textRecognitionRequest = VNRecognizeTextRequest(completionHandler: nil)
     var cellNumber: Int? //for referring to existing cells
@@ -36,10 +34,7 @@ class ProcessedImageViewController: UIViewController, VNDocumentCameraViewContro
     
     override func viewWillDisappear(_ animated: Bool) {
         synthesizer.stopSpeaking(at: .immediate)
-        
     }
-    
-
     override func viewDidLoad() {
         super.viewDidLoad()
         textView.isEditable = false
@@ -57,14 +52,9 @@ class ProcessedImageViewController: UIViewController, VNDocumentCameraViewContro
             textView.text = selectedText?.text
             print("Key is:" + image.getExistingKey(cellNumber!))
             imageView.image = image.retrieveImage(forKey: image.getExistingKey(cellNumber!), inStorageType: .fileSystem)
-            //imageView.image = image.retrieveImage(forKey: "item0", inStorageType: .fileSystem)
             if let imageKey = selectedText?.imageKey{
-            print(imageKey)
             imageView.image = image.retrieveImage(forKey: imageKey, inStorageType: .fileSystem)
-               
             }
-            
-            
         }
         /*view.addSubview(indicator)
         indicator.addCircle(lineColor: UIColor(red: 255/255, green: 91/255, blue: 25/255, alpha: 1), lineWidth: 2, radius: 16, angle: 0)
@@ -90,7 +80,6 @@ class ProcessedImageViewController: UIViewController, VNDocumentCameraViewContro
             for observation in observations {
                 guard let topCandidate = observation.topCandidates(1).first else { return }
                 //print("text \(topCandidate.string) has confidence \(topCandidate.confidence)")
-                
                 detectedText += topCandidate.string
                 detectedText += " "
             }
@@ -100,13 +89,11 @@ class ProcessedImageViewController: UIViewController, VNDocumentCameraViewContro
                 let alert = UIAlertController(title: "No text found", message: "No text was scanned. Please try again", preferredStyle: .alert)
                 let okAction = UIAlertAction(title: "OK", style: .default) {(action) in
                     self.performSegue(withIdentifier: "unwindToCells", sender: action)
-                    
                 }
                 
                 alert.addAction(okAction)
                 self.present(alert, animated: true, completion: nil)
             }
-            
             else if detectedText != ""{
                 let newTextData = textData()
                 newTextData.text = detectedText
@@ -163,14 +150,9 @@ class ProcessedImageViewController: UIViewController, VNDocumentCameraViewContro
             controller.dismiss(animated: true)
             return
         }
-        
-        
-        
         let originalImage = scan.imageOfPage(at: 0)
         let newImage = compressedImage(originalImage)
         controller.dismiss(animated: true)
-        
-        
         let scannedImage = scan.imageOfPage(at: 0)
         let handler = VNImageRequestHandler(cgImage: scannedImage.cgImage!, options: [:])
         do {
@@ -178,9 +160,6 @@ class ProcessedImageViewController: UIViewController, VNDocumentCameraViewContro
         } catch {
             print(error)
         }
-        
-        
-        
         processImage(newImage)
     }
     
@@ -249,12 +228,11 @@ class ProcessedImageViewController: UIViewController, VNDocumentCameraViewContro
     @IBAction func shareButtonPressed(_ sender: UIBarButtonItem) {
         let items = [textView.text]
          let ac = UIActivityViewController(activityItems: items, applicationActivities: nil)
-        //ac.excludedActivityTypes = ["com.tencent.xin.sharetimeline"] //can't exclude Wechat
         present(ac, animated: true)
         if let popOver = ac.popoverPresentationController {
           popOver.sourceView = self.view
           popOver.sourceRect = CGRect(x: self.view.bounds.midX, y: self.view.bounds.midY, width: 0, height: 0)
-            popOver.barButtonItem = sender
+          popOver.barButtonItem = sender
         }
         
     }
