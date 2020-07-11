@@ -17,6 +17,8 @@ class ProcessedImageViewController: UIViewController, VNDocumentCameraViewContro
     @IBOutlet weak var speakerBarButton: UIBarButtonItem!
     let realm = try! Realm()
     //let spin = SpinnerViewController()
+    let session = AVAudioSession.sharedInstance()
+    
     let alert = UIAlertController(title: nil, message: "Scanning for Text", preferredStyle: .alert)
     //let indicator = SpinningIndicator(frame: UIScreen.main.bounds)
     var buttonPressed: Bool = false
@@ -27,6 +29,7 @@ class ProcessedImageViewController: UIViewController, VNDocumentCameraViewContro
     var selectedText : textData? //this will be set during the segue
     var image = Image()
     let synthesizer = AVSpeechSynthesizer()
+    var scanCount: Int = 0
     private var imageUrl: URL?
     enum StorageType {
         case fileSystem
@@ -44,6 +47,7 @@ class ProcessedImageViewController: UIViewController, VNDocumentCameraViewContro
         navigationController?.isToolbarHidden = false
         speakerBarButton.image = UIImage(named: "speaker.2")
         synthesizer.delegate = self
+        imageView.isUserInteractionEnabled = true
         if buttonPressed{
             pictureButtonPressed()
             setupVision()
@@ -60,6 +64,8 @@ class ProcessedImageViewController: UIViewController, VNDocumentCameraViewContro
         indicator.addCircle(lineColor: UIColor(red: 255/255, green: 91/255, blue: 25/255, alpha: 1), lineWidth: 2, radius: 16, angle: 0)
         indicator.addCircle(lineColor: UIColor.orange, lineWidth: 2, radius: 19, angle: CGFloat.pi)*/
     }
+
+    
     
     func pictureButtonPressed(){
         let scannerViewController = VNDocumentCameraViewController()
@@ -113,6 +119,12 @@ class ProcessedImageViewController: UIViewController, VNDocumentCameraViewContro
         image.store(image: processedImage, forKey: image.getNewKey(textCount!), withStorageType: .fileSystem) //save the image
         imageView.image = processedImage
         recognizeTextInImage(processedImage)
+        if scanCount > 1{
+            let pageAlert = UIAlertController(title: "Multiple images scanned", message: "Please scan only one image at a time", preferredStyle: .alert)
+            let okPressed2 = UIAlertAction(title: "OK", style: .default)
+            pageAlert.addAction(okPressed2)
+            self.present(pageAlert, animated: true, completion: nil)
+        }
     }
     
     private func recognizeTextInImage(_ image: UIImage) {
@@ -146,10 +158,12 @@ class ProcessedImageViewController: UIViewController, VNDocumentCameraViewContro
             self.alert.view.addSubview(loadingIndicator)
             self.present(self.alert, animated: true, completion: nil)
         }*/
+        scanCount = scan.pageCount
         guard scan.pageCount >= 1 else {
             controller.dismiss(animated: true)
             return
         }
+        
         let originalImage = scan.imageOfPage(at: 0)
         let newImage = compressedImage(originalImage)
         controller.dismiss(animated: true)
@@ -245,16 +259,25 @@ class ProcessedImageViewController: UIViewController, VNDocumentCameraViewContro
         utterance.voice = AVSpeechSynthesisVoice(language: "en-US")
         utterance.rate = 0.5
         if sender.image == UIImage(named: "speaker.2"){
+            if session.outputVolume.isZero{ //if the volume is off, notify the user
+                let audioAlert = UIAlertController(title: "Increase Speaker Volume", message: "Please increase speaker volume to use text-to-speech feature", preferredStyle: .alert)
+                let okPressed = UIAlertAction(title: "OK", style: .default)
+                audioAlert.addAction(okPressed)
+                self.present(audioAlert, animated: true, completion: nil)
+            }
+            else{
             synthesizer.speak(utterance)
             UIApplication.shared.isIdleTimerDisabled = true //when speaking, won't fall asleep
             sender.image = UIImage(named: "speakerSlash")
+            }
         }
         else if sender.image == UIImage(named: "speakerSlash"){
             synthesizer.stopSpeaking(at: .immediate)
             UIApplication.shared.isIdleTimerDisabled = false
             sender.image = UIImage(named: "speaker.2")
-            print("button pressed")
         }
+        
+        
         
     }
      func speechSynthesizer(_ synthesizer: AVSpeechSynthesizer,

@@ -182,6 +182,7 @@ func updateSearchResults(for searchController: UISearchController) {
       }
       else{
           //searchController.searchBar.resignFirstResponder()
+          
           searchBarCancelButtonClicked(search.searchBar)
       }
       
@@ -197,6 +198,7 @@ func updateSearchResults(for searchController: UISearchController) {
   func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
       text = realm.objects(textData.self)
       text = text!.sorted(byKeyPath: "date", ascending: false)
+      label.isHidden = true
       updateSearchResults(for: search)
   }
 }
