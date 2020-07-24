@@ -16,11 +16,9 @@ class ProcessedImageViewController: UIViewController, VNDocumentCameraViewContro
     @IBOutlet weak var textView: UITextView!
     @IBOutlet weak var speakerBarButton: UIBarButtonItem!
     let realm = try! Realm()
-    //let spin = SpinnerViewController()
     let session = AVAudioSession.sharedInstance()
-    
-    let alert = UIAlertController(title: nil, message: "Scanning for Text", preferredStyle: .alert)
-    //let indicator = SpinningIndicator(frame: UIScreen.main.bounds)
+    let loadingIndicator = UIActivityIndicatorView(frame: CGRect(x: 10, y: 5, width: 50, height: 50))
+    let scanningAlert = UIAlertController(title: nil, message: "Scanning for Text", preferredStyle: .alert)
     var buttonPressed: Bool = false
     var textRecognitionRequest = VNRecognizeTextRequest(completionHandler: nil)
     var cellNumber: Int? //for referring to existing cells
@@ -30,6 +28,8 @@ class ProcessedImageViewController: UIViewController, VNDocumentCameraViewContro
     var image = Image()
     let synthesizer = AVSpeechSynthesizer()
     var scanCount: Int = 0
+    var detectedText = ""
+    var scannedImage: UIImage?
     private var imageUrl: URL?
     enum StorageType {
         case fileSystem
@@ -48,21 +48,20 @@ class ProcessedImageViewController: UIViewController, VNDocumentCameraViewContro
         speakerBarButton.image = UIImage(named: "speaker.2")
         synthesizer.delegate = self
         imageView.isUserInteractionEnabled = true
+        loadingIndicator.hidesWhenStopped = true
+        loadingIndicator.style = UIActivityIndicatorView.Style.medium
         if buttonPressed{
             pictureButtonPressed()
             setupVision()
         }
         else if (textView.text != nil){ //if there is text, we just display it (no other methods are called)
             textView.text = selectedText?.text
-            print("Key is:" + image.getExistingKey(cellNumber!))
+            //print("Key is:" + image.getExistingKey(cellNumber!))
             imageView.image = image.retrieveImage(forKey: image.getExistingKey(cellNumber!), inStorageType: .fileSystem)
             if let imageKey = selectedText?.imageKey{
             imageView.image = image.retrieveImage(forKey: imageKey, inStorageType: .fileSystem)
             }
         }
-        /*view.addSubview(indicator)
-        indicator.addCircle(lineColor: UIColor(red: 255/255, green: 91/255, blue: 25/255, alpha: 1), lineWidth: 2, radius: 16, angle: 0)
-        indicator.addCircle(lineColor: UIColor.orange, lineWidth: 2, radius: 19, angle: CGFloat.pi)*/
     }
 
     
@@ -71,8 +70,7 @@ class ProcessedImageViewController: UIViewController, VNDocumentCameraViewContro
         let scannerViewController = VNDocumentCameraViewController()
         scannerViewController.delegate = self
         present(scannerViewController, animated: true)
-        //loading animation
-        //indicator.beginAnimating()
+        
         
     }
     
@@ -82,82 +80,80 @@ class ProcessedImageViewController: UIViewController, VNDocumentCameraViewContro
         textRecognitionRequest = VNRecognizeTextRequest { (request, error) in
            
             guard let observations = request.results as? [VNRecognizedTextObservation] else { return }
-            var detectedText = ""
+            
             for observation in observations {
                 guard let topCandidate = observation.topCandidates(1).first else { return }
                 //print("text \(topCandidate.string) has confidence \(topCandidate.confidence)")
-                detectedText += topCandidate.string
-                detectedText += " "
+                self.detectedText += topCandidate.string
+                self.detectedText += " "
             }
             
+            DispatchQueue.main.async {
+            self.dismiss(animated: true, completion: nil)
+            }
             
-            if detectedText == ""{ //if no text detected, alert the user
+            if self.detectedText == ""{ //if no text detected, alert the user
                 let alert = UIAlertController(title: "No text found", message: "No text was scanned. Please try again", preferredStyle: .alert)
                 let okAction = UIAlertAction(title: "OK", style: .default) {(action) in
                     self.performSegue(withIdentifier: "unwindToCells", sender: action)
                 }
-                
                 alert.addAction(okAction)
                 self.present(alert, animated: true, completion: nil)
             }
-            else if detectedText != ""{
+            else{
                 let newTextData = textData()
-                newTextData.text = detectedText
+                newTextData.text = self.detectedText
                 newTextData.imageKey = self.image.getNewKey(self.textCount!)
                 newTextData.date = Date()
-                self.saveItems(newTextData)
+                    DispatchQueue.main.async{
+                        self.displayTextAndImage() //call this method to trigger all at once
+                        self.saveItems(newTextData)
+                    }
+             
+               
             }
-            DispatchQueue.main.async {
-                self.textView.text = detectedText
-                self.textView.flashScrollIndicators()
-            }
+            
         }
         textRecognitionRequest.recognitionLevel = .accurate
     }
     
+    func displayTextAndImage(){
+        DispatchQueue.main.async { //display all at once to prevent lagging
+            self.textView.text = self.detectedText
+            self.textView.flashScrollIndicators()
+            self.imageView.image = self.scannedImage
+        }
+    }
     private func processImage(_ processedImage: UIImage) {
+        
         image.store(image: processedImage, forKey: image.getNewKey(textCount!), withStorageType: .fileSystem) //save the image
-        imageView.image = processedImage
         recognizeTextInImage(processedImage)
         if scanCount > 1{
-            let pageAlert = UIAlertController(title: "Multiple images scanned", message: "Please scan only one image at a time", preferredStyle: .alert)
-            let okPressed2 = UIAlertAction(title: "OK", style: .default)
-            pageAlert.addAction(okPressed2)
-            self.present(pageAlert, animated: true, completion: nil)
+            DispatchQueue.main.async {
+                let pageAlert = UIAlertController(title: "Multiple images scanned", message: "Please scan only one image at a time", preferredStyle: .alert)
+                let okPressed2 = UIAlertAction(title: "OK", style: .default)
+                pageAlert.addAction(okPressed2)
+                self.present(pageAlert, animated: true, completion: nil)
+            }
+            
         }
     }
     
     private func recognizeTextInImage(_ image: UIImage) {
-        
         guard let cgImage = image.cgImage else { return }
-        
-        textView.text = ""
-        textRecognitionWorkQueue.async {
-            let requestHandler = VNImageRequestHandler(cgImage: cgImage, options: [:])
-            do {
-                try requestHandler.perform([self.textRecognitionRequest])
-            } catch {
-                print(error)
-            }
-        }
-        //dismiss(animated: false, completion: nil)
-        //indicator.endAnimating()
     }
     
     
     
     func documentCameraViewController(_ controller: VNDocumentCameraViewController, didFinishWith scan: VNDocumentCameraScan) {
-        
-       //Loading animation - need to figure out where this goes
-        /*DispatchQueue.main.async {
-            let loadingIndicator = UIActivityIndicatorView(frame: CGRect(x: 10, y: 5, width: 50, height: 50))
-            loadingIndicator.hidesWhenStopped = true
-            loadingIndicator.style = UIActivityIndicatorView.Style.medium
-            loadingIndicator.startAnimating()
-
-            self.alert.view.addSubview(loadingIndicator)
-            self.present(self.alert, animated: true, completion: nil)
-        }*/
+        controller.dismiss(animated: true)
+        DispatchQueue.global(qos: .userInitiated).async { //loading animation
+        DispatchQueue.main.async {
+            self.loadingIndicator.startAnimating()
+            self.scanningAlert.view.addSubview(self.loadingIndicator)
+            self.present(self.scanningAlert, animated: true, completion: nil)
+            }
+        }
         scanCount = scan.pageCount
         guard scan.pageCount >= 1 else {
             controller.dismiss(animated: true)
@@ -166,15 +162,20 @@ class ProcessedImageViewController: UIViewController, VNDocumentCameraViewContro
         
         let originalImage = scan.imageOfPage(at: 0)
         let newImage = compressedImage(originalImage)
-        controller.dismiss(animated: true)
-        let scannedImage = scan.imageOfPage(at: 0)
-        let handler = VNImageRequestHandler(cgImage: scannedImage.cgImage!, options: [:])
-        do {
-            try handler.perform([textRecognitionRequest])
-        } catch {
-            print(error)
+        self.scannedImage = newImage
+        let imageToBeAnalyzed = scan.imageOfPage(at: 0)
+        DispatchQueue.global(qos: .userInitiated).async {
+            let handler = VNImageRequestHandler(cgImage: imageToBeAnalyzed.cgImage!, options: [:])
+            do {
+                try handler.perform([self.textRecognitionRequest])
+            } catch {
+                print(error)
+            }
+            
+            self.processImage(newImage)
         }
-        processImage(newImage)
+        
+        
     }
     
     func compressedImage(_ originalImage: UIImage) -> UIImage {
@@ -186,28 +187,6 @@ class ProcessedImageViewController: UIViewController, VNDocumentCameraViewContro
         return reloadedImage
     }
     
-    /*func startSpinning(){ //loading animation appears while processing image
-        
-        // add the spinner view controller
-        addChild(spin)
-        spin.view.frame = view.frame
-        view.addSubview(spin.view)
-        spin.didMove(toParent: self)
-
-        /*// wait two seconds to simulate some work happening
-        DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-            // then remove the spinner view controller
-            spin.willMove(toParent: nil)
-            spin.view.removeFromSuperview()
-            spin.removeFromParent()
-        }*/
-    }
-    
-    func stopSpinning(){
-        spin.willMove(toParent: nil)
-        spin.view.removeFromSuperview()
-        spin.removeFromParent()
-    }*/
    
     
     //MARK: - DocumentCameraViewController Delegate Methods
@@ -241,7 +220,7 @@ class ProcessedImageViewController: UIViewController, VNDocumentCameraViewContro
     //MARK: - Share Function
     @IBAction func shareButtonPressed(_ sender: UIBarButtonItem) {
         let items = [textView.text]
-         let ac = UIActivityViewController(activityItems: items, applicationActivities: nil)
+        let ac = UIActivityViewController(activityItems: items, applicationActivities: nil)
         present(ac, animated: true)
         if let popOver = ac.popoverPresentationController {
           popOver.sourceView = self.view
@@ -254,13 +233,12 @@ class ProcessedImageViewController: UIViewController, VNDocumentCameraViewContro
     //MARK: - Text to Speech
     
     @IBAction func speakerButtonPressed(_ sender: UIBarButtonItem){
-        print(synthesizer.isSpeaking)
         let utterance = AVSpeechUtterance(string: textView.text)
         utterance.voice = AVSpeechSynthesisVoice(language: "en-US")
         utterance.rate = 0.5
         if sender.image == UIImage(named: "speaker.2"){
             if session.outputVolume.isZero{ //if the volume is off, notify the user
-                let audioAlert = UIAlertController(title: "Increase Speaker Volume", message: "Please increase speaker volume to use text-to-speech feature", preferredStyle: .alert)
+                let audioAlert = UIAlertController(title: "Increase Speaker Volume", message: "Increase speaker volume to use text-to-speech feature", preferredStyle: .alert)
                 let okPressed = UIAlertAction(title: "OK", style: .default)
                 audioAlert.addAction(okPressed)
                 self.present(audioAlert, animated: true, completion: nil)
