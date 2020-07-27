@@ -226,41 +226,48 @@ class ProcessedImageViewController: UIViewController, VNDocumentCameraViewContro
           popOver.sourceView = self.view
           popOver.sourceRect = CGRect(x: self.view.bounds.midX, y: self.view.bounds.midY, width: 0, height: 0)
           popOver.barButtonItem = sender
-        }
         
+        }
+       
     }
     
     //MARK: - Text to Speech
     
     @IBAction func speakerButtonPressed(_ sender: UIBarButtonItem){
         let utterance = AVSpeechUtterance(string: textView.text)
-        utterance.voice = AVSpeechSynthesisVoice(language: "en-US")
-        utterance.rate = 0.5
-        if sender.image == UIImage(named: "speaker.2"){
-            if session.outputVolume.isZero{ //if the volume is off, notify the user
-                let audioAlert = UIAlertController(title: "Increase Speaker Volume", message: "Increase speaker volume to use text-to-speech feature", preferredStyle: .alert)
-                let okPressed = UIAlertAction(title: "OK", style: .default)
-                audioAlert.addAction(okPressed)
-                self.present(audioAlert, animated: true, completion: nil)
-            }
-            else{
-            synthesizer.speak(utterance)
-            UIApplication.shared.isIdleTimerDisabled = true //when speaking, won't fall asleep
-            sender.image = UIImage(named: "speakerSlash")
-            }
-        }
-        else if sender.image == UIImage(named: "speakerSlash"){
-            synthesizer.stopSpeaking(at: .immediate)
-            UIApplication.shared.isIdleTimerDisabled = false
-            sender.image = UIImage(named: "speaker.2")
-        }
-        
-        
-        
-    }
-     func speechSynthesizer(_ synthesizer: AVSpeechSynthesizer,
-                           didFinish utterance: AVSpeechUtterance){
-        speakerBarButton.image = UIImage(named: "speaker.2")
-        UIApplication.shared.isIdleTimerDisabled = false
-    }
+              utterance.voice = AVSpeechSynthesisVoice(language: "en-US")
+              utterance.rate = 0.5
+              //if sender.image == UIImage(named: "speaker.2"){
+                  /*if speakerVolume == 0{ //if the volume is off, notify the user
+                      let audioAlert = UIAlertController(title: "Increase Speaker Volume", message: "Increase speaker volume to use text-to-speech feature", preferredStyle: .alert)
+                      let okPressed = UIAlertAction(title: "OK", style: .default)
+                      audioAlert.addAction(okPressed)
+                      self.present(audioAlert, animated: true, completion: nil)
+                  }
+                  else{*/
+                 
+                  //
+               //}
+                  
+              //}
+               if sender.image == UIImage(named: "speakerSlash"){
+                  synthesizer.stopSpeaking(at: .immediate)
+                  UIApplication.shared.isIdleTimerDisabled = false
+               sender.image = UIImage(named: "speaker.2")
+              }
+              
+               else{
+                   synthesizer.speak(utterance)
+                                      print("is speaking")
+                                     UIApplication.shared.isIdleTimerDisabled = true //when speaking, won't fall asleep
+                   sender.image = UIImage(named: "speakerSlash")
+       }
+              
+          }
+           func speechSynthesizer(_ synthesizer: AVSpeechSynthesizer,
+                                 didFinish utterance: AVSpeechUtterance){
+               print("ok")
+              speakerBarButton.image = UIImage(named: "speaker.2")
+              UIApplication.shared.isIdleTimerDisabled = false
+          }
 }
